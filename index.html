@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Muhammed Murad Chamaa</title>
+  <style>
+    :root {
+      --bg:     #0d0d10;
+      --fg:     #e8e6e0;
+      --dim:    #5a5a66;
+      --link:   #c8c0f0;
+      --desc:   #888898;
+      --accent: #c8a96e;
+    }
+    body.light {
+      --bg:   #f0eeea;
+      --fg:   #111118;
+      --dim:  #aaa8b0;
+      --link: #4040c0;
+      --desc: #666672;
+      --accent: #8a6020;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--fg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      font-size: 16px;
+      line-height: 1.5;
+      transition: background .25s, color .25s;
+      padding: 3.5rem 4rem 6rem;
+      max-width: 1100px;
+    }
+
+    /* ── HEADER ── */
+    h1 {
+      font-size: clamp(3.5rem, 8vw, 5.5rem);
+      font-weight: 800;
+      letter-spacing: -.03em;
+      line-height: 1;
+      margin-bottom: 1.1rem;
+      cursor: pointer;
+      color: var(--fg);
+      display: inline-block;
+      transition: opacity .15s;
+      user-select: none;
+    }
+    h1:hover { opacity: .75; }
+
+    .intro {
+      font-size: 1.2rem;
+      color: var(--desc);
+      margin-bottom: 3.8rem;
+      font-weight: 400;
+    }
+    .intro a {
+      color: var(--fg);
+      font-weight: 600;
+      text-decoration: none;
+      transition: opacity .15s;
+    }
+    .intro a:hover { opacity: .6; }
+
+    /* ── SECTIONS ── */
+    section { display: none; }
+    body.making .making { display: block; }
+    body.now    .now    { display: block; }
+    body.work   .work   { display: block; }
+
+    /* ── SECTION HEADING ── */
+    h2 {
+      font-size: clamp(2.8rem, 7vw, 4.5rem);
+      font-weight: 800;
+      letter-spacing: -.03em;
+      line-height: 1;
+      margin-bottom: 1.6rem;
+      color: var(--fg);
+    }
+
+    /* ── PROJECT LIST ── */
+    .projects ul { list-style: none; }
+
+    .projects li {
+      opacity: 0;
+      transform: translateY(6px);
+      animation: appear .3s forwards;
+    }
+    .projects li:nth-child(1)  { animation-delay: .03s }
+    .projects li:nth-child(2)  { animation-delay: .07s }
+    .projects li:nth-child(3)  { animation-delay: .11s }
+    .projects li:nth-child(4)  { animation-delay: .15s }
+    .projects li:nth-child(5)  { animation-delay: .19s }
+    .projects li:nth-child(6)  { animation-delay: .23s }
+    .projects li:nth-child(7)  { animation-delay: .27s }
+    .projects li:nth-child(8)  { animation-delay: .31s }
+
+    .projects li a {
+      display: block;
+      padding: .38rem 0;
+      text-decoration: none;
+      color: inherit;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      transition: opacity .15s;
+      font-size: 1.05rem;
+    }
+    .projects li a:hover { opacity: .65; }
+
+    .year {
+      display: inline;
+      color: var(--dim);
+      font-weight: 400;
+      margin-right: .9rem;
+      font-variant-numeric: tabular-nums;
+      min-width: 3rem;
+    }
+    .name {
+      display: inline;
+      color: var(--link);
+      font-weight: 600;
+      margin-right: .7rem;
+    }
+    .description {
+      display: inline;
+      color: var(--desc);
+      font-weight: 400;
+    }
+    .badge {
+      display: inline;
+      font-size: .65rem;
+      font-weight: 700;
+      letter-spacing: .05em;
+      padding: .15rem .45rem;
+      border-radius: 3px;
+      background: rgba(200,169,110,.15);
+      color: var(--accent);
+      border: 1px solid rgba(200,169,110,.35);
+      margin-left: .4rem;
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+
+    .projects + .projects { margin-top: 2.8rem; }
+
+    /* ── NOW ── */
+    .now-content {
+      max-width: 620px;
+      opacity: 0;
+      animation: appear .35s .05s forwards;
+    }
+    .now-content p {
+      font-size: 1.05rem;
+      color: var(--fg);
+      margin-bottom: 1rem;
+      line-height: 1.7;
+    }
+    .now-content p a { color: var(--link); text-decoration: none; border-bottom: 1px solid rgba(100,100,200,.3); transition: opacity .15s; }
+    .now-content p a:hover { opacity: .7; }
+    .now-content p s { opacity: .35; text-decoration-color: var(--dim); }
+
+    /* ── WORK ── */
+    .work-content {
+      max-width: 640px;
+      opacity: 0;
+      animation: appear .35s .05s forwards;
+    }
+    .work-content p { font-size: 1.05rem; margin-bottom: 1.2rem; color: var(--fg); line-height: 1.7; }
+    .work-content ul { list-style: none; margin-bottom: 2rem; }
+    .work-content ul li {
+      font-size: 1.05rem;
+      padding: .32rem 0;
+      color: var(--fg);
+    }
+    .work-content ul li a { color: var(--link); text-decoration: none; }
+    .work-content ul li a:hover { opacity: .7; }
+    .work-h3 {
+      font-size: .72rem;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--dim);
+      margin: 1.8rem 0 .7rem;
+    }
+    .work-row { display: flex; justify-content: space-between; padding: .32rem 0; font-size: 1rem; border-bottom: 1px solid rgba(255,255,255,.05); }
+    body.light .work-row { border-bottom-color: rgba(0,0,0,.07); }
+    .work-row-right { color: var(--dim); font-size: .85rem; }
+    .award-block {
+      margin: .5rem 0 1.5rem;
+      padding: .75rem 1rem;
+      border-left: 3px solid var(--accent);
+      background: rgba(200,169,110,.06);
+      font-size: .95rem;
+      color: var(--desc);
+    }
+    .award-block strong { color: var(--accent); }
+
+    /* ── ELSEWHERE ── */
+    .links { margin-top: 3rem; }
+    .links ul { list-style: none; display: flex; gap: 1.8rem; flex-wrap: wrap; }
+    .links ul li a { color: var(--dim); text-decoration: none; font-size: .9rem; transition: color .15s; }
+    .links ul li a:hover { color: var(--fg); }
+
+    /* ── OUTRO ── */
+    .outro {
+      margin-top: 4rem;
+      display: flex; gap: 2rem;
+      border-top: 1px solid rgba(255,255,255,.06);
+      padding-top: 1.5rem;
+    }
+    body.light .outro { border-top-color: rgba(0,0,0,.1); }
+    .outro a { color: var(--dim); text-decoration: none; font-size: .85rem; transition: color .15s; }
+    .outro a:hover { color: var(--fg); }
+
+    /* ── THEME TOGGLE ── */
+    .toggle {
+      position: fixed; bottom: 1.4rem; right: 1.4rem;
+      display: flex; gap: .4rem;
+    }
+    .toggle button {
+      background: none; border: 1px solid var(--dim); color: var(--dim);
+      width: 30px; height: 30px; border-radius: 4px; cursor: pointer;
+      font-size: .85rem; line-height: 1; transition: color .15s, border-color .15s;
+    }
+    .toggle button:hover { color: var(--fg); border-color: var(--fg); }
+
+    /* ── ANIMATION ── */
+    @keyframes appear {
+      to { opacity: 1; transform: none; }
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 600px) {
+      body { padding: 2.2rem 1.4rem 5rem; }
+      .projects li a { white-space: normal; }
+    }
+  </style>
+</head>
+<body class="making dark">
+
+  <h1 id="h1">Muhammed Murad Chamaa</h1>
+
+  <p class="intro">
+    <a href="#" class="js--making">making things</a>
+    and <a href="#now" class="js--now">doing things</a>
+    and <a href="#work" class="js--work">working</a>
+  </p>
+
+  <!-- ══ MAKING ══ -->
+  <section class="making projects">
+    <h2>Projects</h2>
+    <ul>
+      <li><a href="https://mmuradc.itch.io/" target="_blank">
+        <span class="year">2024</span><span class="name">World's Hardest Golf Game</span><span class="description">A brutally difficult 2D golf game — patience as mechanic (live on itch.io)</span>
+      </a></li>
+      <li><a href="#">
+        <span class="year">2024</span><span class="name">TimeForger</span><span class="description">2D platformer with time manipulation — rewind, freeze, fast-forward reality</span>
+      </a></li>
+      <li><a href="#">
+        <span class="year">2024</span><span class="name">5G Model-Based Positioning</span><span class="description">Fingerprinting + multilateration + ML for indoor positioning. 70% accuracy gain<span class="badge">🏆 TEKNOFEST 2025 · 5th place</span></span>
+      </a></li>
+      <li><a href="#">
+        <span class="year">2024</span><span class="name">Terraria-Style Side-Scroller</span><span class="description">Pixel art platformer with procedural tilemap, hold-to-mine, 3-slot inventory</span>
+      </a></li>
+      <li><a href="#">
+        <span class="year">2024</span><span class="name">Collve</span><span class="description">2D game project in active development</span>
+      </a></li>
+      <li><a href="#">
+        <span class="year">2024</span><span class="name">Local LLM Deployment</span><span class="description">Running large language models on low-spec hardware via quantization + OpenWebUI</span>
+      </a></li>
+    </ul>
+  </section>
+
+  <section class="making links">
+    <h2 style="font-size:2rem; margin-top: 3rem;">Elsewhere</h2>
+    <ul>
+      <li><a href="mailto:141.muh.mur.cha@gmail.com">email</a></li>
+      <li><a href="https://github.com/mmuradc" target="_blank">github</a></li>
+      <li><a href="https://linkedin.com/in/muhammed-murad-chamaa-a4216b28a" target="_blank">linkedin</a></li>
+      <li><a href="https://mmuradc.itch.io/" target="_blank">itch.io</a></li>
+    </ul>
+  </section>
+
+  <div class="making outro">
+    <a href="#now" class="js--now">Now</a>
+    <a href="#work" class="js--work">Work</a>
+  </div>
+
+  <!-- ══ NOW ══ -->
+  <section class="now">
+    <h2>Now</h2>
+    <div class="now-content">
+      <p>I'm Murad — a Computer Engineering student at Gazi University in Ankara. Third year, GPA 3.50/4.00.</p>
+      <p>I've been building games since I can remember. Currently deep in a <a href="#">Terraria-style pixel platformer</a> with procedural tilemap generation. <s>Sleep</s> Shipping things is the priority.</p>
+      <p>In 2025 my team won the Most Original Software Award at <a href="#">TEKNOFEST</a> and placed 5th nationally for our 5G indoor positioning system — a weird combination of fingerprinting, multilateration, and PyTorch/XGBoost that somehow worked.</p>
+      <p>I chair the Digital Game Design Society at Gazi University. Previously board member of both the R&amp;D team and the Data Science Society. Running communities is harder than it looks.</p>
+      <p>Currently learning: superconducting quantum chip design for TEKNOFEST 2026. Transmon qubits are beautiful and terrifying in equal measure.</p>
+      <p>I work in Unity 6 and Godot 4, mostly C# and GDScript. Python for everything ML-related. Running <a href="#">Arch</a> and <a href="#">Fedora</a> — yes, both.</p>
+      <p>Three languages: Turkish (native), English (C1), Arabic (B1). Working on not mixing them mid-sentence.</p>
+    </div>
+  </section>
+
+  <div class="now outro">
+    <a href="#" class="js--making">Projects</a>
+    <a href="#work" class="js--work">Work</a>
+  </div>
+
+  <!-- ══ WORK ══ -->
+  <section class="work">
+    <h2>Work</h2>
+    <div class="work-content">
+      <p>Computer Engineering student at Gazi University (2023–present). Available for internships — game dev, ML, systems work.</p>
+
+      <div class="award-block">
+        <strong>TEKNOFEST 2025</strong> — Most Original Software Award · 5th Place, 5G Positioning
+      </div>
+
+      <div class="work-h3">Experience</div>
+      <div class="work-row"><span>IT Intern — Türkiye İş Kurumu (İŞKUR)</span><span class="work-row-right">Feb–Jun 2025</span></div>
+      <div class="work-row"><span>Chairman — Digital Game Design Society, Gazi</span><span class="work-row-right">Jan 2026–now</span></div>
+      <div class="work-row"><span>Member — Ergenekon R&amp;D Team, Gazi</span><span class="work-row-right">2024–now</span></div>
+      <div class="work-row"><span>Board Member — Data Science Society, Gazi</span><span class="work-row-right">Sep 2024–Apr 2025</span></div>
+
+      <div class="work-h3">Skills</div>
+      <div class="work-row"><span>Unity 6 / C#</span><span class="work-row-right">game dev</span></div>
+      <div class="work-row"><span>Godot 4 / GDScript</span><span class="work-row-right">game dev</span></div>
+      <div class="work-row"><span>Python</span><span class="work-row-right">general + ML</span></div>
+      <div class="work-row"><span>C / C++</span><span class="work-row-right">systems</span></div>
+      <div class="work-row"><span>PyTorch · XGBoost · Scikit-Learn</span><span class="work-row-right">ml</span></div>
+      <div class="work-row"><span>NumPy · Pandas</span><span class="work-row-right">data</span></div>
+      <div class="work-row"><span>Git · Linux (Arch, Fedora)</span><span class="work-row-right">tooling</span></div>
+      <div class="work-row"><span>Cisco CCNA ×3</span><span class="work-row-right">networking</span></div>
+
+      <div class="work-h3">Links</div>
+      <ul>
+        <li><a href="https://github.com/mmuradc" target="_blank">GitHub — mmuradc</a></li>
+        <li><a href="https://mmuradc.itch.io/" target="_blank">itch.io — mmuradc</a></li>
+        <li><a href="https://linkedin.com/in/muhammed-murad-chamaa-a4216b28a" target="_blank">LinkedIn</a></li>
+        <li><a href="mailto:141.muh.mur.cha@gmail.com">141.muh.mur.cha@gmail.com</a></li>
+      </ul>
+    </div>
+  </section>
+
+  <div class="work outro">
+    <a href="#" class="js--making">Projects</a>
+    <a href="#now" class="js--now">Now</a>
+  </div>
+
+  <!-- THEME TOGGLE -->
+  <div class="toggle">
+    <button id="btn-dark"  title="Dark mode">🌙</button>
+    <button id="btn-light" title="Light mode">☀️</button>
+  </div>
+
+<script>
+  var body = document.body;
+
+  // Auto light/dark by time
+  var h = new Date().getHours();
+  body.classList.toggle('light', h >= 7 && h < 20);
+  body.classList.toggle('dark',  !(h >= 7 && h < 20));
+
+  function switchMode(mode) {
+    return function(e) {
+      if (e) e.preventDefault();
+      body.classList.remove('making','now','work');
+      body.classList.add(mode);
+      history.replaceState(null,'', mode==='making' ? location.pathname : '#'+mode);
+      if (e) window.scrollTo({top:0, behavior:'smooth'});
+    };
+  }
+
+  // Wire nav links
+  document.querySelectorAll('.js--making').forEach(function(el){ el.addEventListener('click', switchMode('making')); });
+  document.querySelectorAll('.js--now').forEach(function(el)   { el.addEventListener('click', switchMode('now')); });
+  document.querySelectorAll('.js--work').forEach(function(el)  { el.addEventListener('click', switchMode('work')); });
+  document.getElementById('h1').addEventListener('click', switchMode('making'));
+
+  // Hash on load
+  var hash = location.hash;
+  if (hash === '#now') switchMode('now')();
+  else if (hash === '#work') switchMode('work')();
+
+  // Theme buttons
+  document.getElementById('btn-dark').addEventListener('click', function(){
+    body.classList.add('dark'); body.classList.remove('light');
+  });
+  document.getElementById('btn-light').addEventListener('click', function(){
+    body.classList.add('light'); body.classList.remove('dark');
+  });
+
+  // Re-trigger animations on mode switch
+  function retrigger(selector) {
+    document.querySelectorAll(selector).forEach(function(el) {
+      el.style.animation = 'none';
+      void el.offsetWidth;
+      el.style.animation = '';
+    });
+  }
+  var modeMap = {
+    making: '.making.projects li, .making.links',
+    now:    '.now-content',
+    work:   '.work-content'
+  };
+  ['making','now','work'].forEach(function(m) {
+    document.querySelectorAll('.js--'+m).forEach(function(el) {
+      el.addEventListener('click', function(){ setTimeout(function(){ retrigger(modeMap[m]); }, 10); });
+    });
+  });
+  document.getElementById('h1').addEventListener('click', function(){
+    setTimeout(function(){ retrigger(modeMap.making); }, 10);
+  });
+</script>
+</body>
+</html>
