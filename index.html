@@ -4,66 +4,107 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Muhammed Murad Chamaa</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
   <style>
     :root {
-      --bg:     #0d0d10;
-      --fg:     #e8e6e0;
-      --dim:    #5a5a66;
-      --link:   #c8c0f0;
-      --desc:   #888898;
-      --accent: #c8a96e;
-    }
-    body.light {
-      --bg:   #f0eeea;
-      --fg:   #111118;
-      --dim:  #aaa8b0;
-      --link: #4040c0;
-      --desc: #666672;
-      --accent: #8a6020;
+      --bg:      #080808;
+      --surface: #111111;
+      --border:  #1e1e1e;
+      --red:     #ff1a1a;
+      --red-dim: #7a0000;
+      --white:   #f0f0f0;
+      --gray:    #444;
+      --dim:     #333;
+      --text:    #cccccc;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
 
     body {
       background: var(--bg);
-      color: var(--fg);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-      font-size: 16px;
-      line-height: 1.5;
-      transition: background .25s, color .25s;
-      padding: 3.5rem 4rem 6rem;
-      max-width: 1100px;
+      color: var(--white);
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
     }
 
-    /* ── HEADER ── */
-    h1 {
-      font-size: clamp(3.5rem, 8vw, 5.5rem);
-      font-weight: 800;
-      letter-spacing: -.03em;
-      line-height: 1;
-      margin-bottom: 1.1rem;
-      cursor: pointer;
-      color: var(--fg);
-      display: inline-block;
-      transition: opacity .15s;
-      user-select: none;
+    /* scanline overlay */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(255,255,255,.015) 2px,
+        rgba(255,255,255,.015) 4px
+      );
+      pointer-events: none;
+      z-index: 9999;
     }
-    h1:hover { opacity: .75; }
 
-    .intro {
-      font-size: 1.2rem;
-      color: var(--desc);
-      margin-bottom: 3.8rem;
-      font-weight: 400;
+    /* red glow ambient */
+    body::after {
+      content: '';
+      position: fixed;
+      top: -30vh; left: -20vw;
+      width: 70vw; height: 70vh;
+      background: radial-gradient(ellipse, rgba(200,0,0,.12) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
     }
-    .intro a {
-      color: var(--fg);
-      font-weight: 600;
+
+    /* ── LAYOUT ── */
+    .wrap {
+      position: relative; z-index: 1;
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 0 2.5rem 6rem;
+    }
+
+    /* ── NAV ── */
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.6rem 0 1.4rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 4rem;
+    }
+    .nav-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.3rem;
+      letter-spacing: .08em;
+      color: var(--white);
       text-decoration: none;
-      transition: opacity .15s;
+      cursor: pointer;
+      transition: color .15s;
     }
-    .intro a:hover { opacity: .6; }
+    .nav-logo:hover { color: var(--red); }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a {
+      font-size: .75rem;
+      font-weight: 500;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--gray);
+      text-decoration: none;
+      transition: color .2s;
+      position: relative;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute; bottom: -2px; left: 0; right: 0;
+      height: 1px; background: var(--red);
+      transform: scaleX(0); transition: transform .2s;
+    }
+    .nav-links a:hover { color: var(--white); }
+    .nav-links a:hover::after { transform: scaleX(1); }
+    .nav-links a.active { color: var(--red); }
+    .nav-links a.active::after { transform: scaleX(1); }
 
     /* ── SECTIONS ── */
     section { display: none; }
@@ -71,298 +112,710 @@
     body.now    .now    { display: block; }
     body.work   .work   { display: block; }
 
-    /* ── SECTION HEADING ── */
-    h2 {
-      font-size: clamp(2.8rem, 7vw, 4.5rem);
-      font-weight: 800;
-      letter-spacing: -.03em;
-      line-height: 1;
-      margin-bottom: 1.6rem;
-      color: var(--fg);
-    }
-
-    /* ── PROJECT LIST ── */
-    .projects ul { list-style: none; }
-
-    .projects li {
+    /* ── HERO (MAKING) ── */
+    .hero {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 3rem;
+      align-items: center;
+      margin-bottom: 5rem;
       opacity: 0;
-      transform: translateY(6px);
-      animation: appear .3s forwards;
-    }
-    .projects li:nth-child(1)  { animation-delay: .03s }
-    .projects li:nth-child(2)  { animation-delay: .07s }
-    .projects li:nth-child(3)  { animation-delay: .11s }
-    .projects li:nth-child(4)  { animation-delay: .15s }
-    .projects li:nth-child(5)  { animation-delay: .19s }
-    .projects li:nth-child(6)  { animation-delay: .23s }
-    .projects li:nth-child(7)  { animation-delay: .27s }
-    .projects li:nth-child(8)  { animation-delay: .31s }
-
-    .projects li a {
-      display: block;
-      padding: .38rem 0;
-      text-decoration: none;
-      color: inherit;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      transition: opacity .15s;
-      font-size: 1.05rem;
-    }
-    .projects li a:hover { opacity: .65; }
-
-    .year {
-      display: inline;
-      color: var(--dim);
-      font-weight: 400;
-      margin-right: .9rem;
-      font-variant-numeric: tabular-nums;
-      min-width: 3rem;
-    }
-    .name {
-      display: inline;
-      color: var(--link);
-      font-weight: 600;
-      margin-right: .7rem;
-    }
-    .description {
-      display: inline;
-      color: var(--desc);
-      font-weight: 400;
-    }
-    .badge {
-      display: inline;
-      font-size: .65rem;
-      font-weight: 700;
-      letter-spacing: .05em;
-      padding: .15rem .45rem;
-      border-radius: 3px;
-      background: rgba(200,169,110,.15);
-      color: var(--accent);
-      border: 1px solid rgba(200,169,110,.35);
-      margin-left: .4rem;
-      vertical-align: middle;
-      white-space: nowrap;
+      animation: fadeUp .5s .05s forwards;
     }
 
-    .projects + .projects { margin-top: 2.8rem; }
-
-    /* ── NOW ── */
-    .now-content {
-      max-width: 620px;
-      opacity: 0;
-      animation: appear .35s .05s forwards;
+    .hero-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(3.5rem, 7vw, 6rem);
+      line-height: .95;
+      letter-spacing: .04em;
+      margin-bottom: 1.2rem;
     }
-    .now-content p {
-      font-size: 1.05rem;
-      color: var(--fg);
-      margin-bottom: 1rem;
+    .hero-title .red { color: var(--red); text-shadow: 0 0 30px rgba(255,26,26,.6), 0 0 60px rgba(255,26,26,.3); }
+    .hero-title .white { color: var(--white); text-shadow: 0 0 20px rgba(255,255,255,.3); }
+
+    .hero-sub {
+      font-size: 1rem;
+      color: var(--text);
+      margin-bottom: 2rem;
+      font-weight: 300;
+      max-width: 400px;
       line-height: 1.7;
     }
-    .now-content p a { color: var(--link); text-decoration: none; border-bottom: 1px solid rgba(100,100,200,.3); transition: opacity .15s; }
-    .now-content p a:hover { opacity: .7; }
-    .now-content p s { opacity: .35; text-decoration-color: var(--dim); }
+
+    .hero-tags { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 1.8rem; }
+    .hero-tag {
+      font-size: .68rem;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      padding: .3rem .8rem;
+      border: 1px solid var(--border);
+      color: var(--gray);
+      transition: all .2s;
+    }
+    .hero-tag.hot {
+      border-color: var(--red);
+      color: var(--red);
+      text-shadow: 0 0 8px rgba(255,26,26,.5);
+      box-shadow: 0 0 8px rgba(255,26,26,.1);
+    }
+
+    .hero-cta { display: flex; gap: 1rem; }
+    .btn {
+      display: inline-flex; align-items: center; gap: .5rem;
+      padding: .75rem 1.8rem;
+      font-family: 'Inter', sans-serif;
+      font-size: .78rem; font-weight: 600; letter-spacing: .1em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border: none; cursor: pointer;
+      transition: all .2s;
+    }
+    .btn-red {
+      background: var(--red); color: #000;
+      box-shadow: 0 0 20px rgba(255,26,26,.4);
+    }
+    .btn-red:hover {
+      background: #ff4444;
+      box-shadow: 0 0 30px rgba(255,26,26,.7);
+      transform: translateY(-2px);
+    }
+    .btn-outline {
+      background: transparent; color: var(--white);
+      border: 1px solid var(--border);
+    }
+    .btn-outline:hover { border-color: var(--red); color: var(--red); transform: translateY(-2px); }
+
+    /* ── PROFILE PHOTO ── */
+    .profile-frame {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 3/4;
+    }
+    .profile-frame::before {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      background: linear-gradient(135deg, var(--red), transparent 50%, var(--red));
+      z-index: 0;
+      opacity: .7;
+    }
+    .profile-img {
+      position: relative; z-index: 1;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+      background: var(--surface);
+    }
+    /* placeholder when no real photo */
+    .profile-img.placeholder {
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column; gap: 1rem;
+      background: var(--surface);
+      color: var(--gray);
+      text-align: center;
+      padding: 2rem;
+      font-size: .75rem;
+      letter-spacing: .05em;
+    }
+    .profile-img.placeholder .ph-icon { font-size: 3rem; opacity: .3; }
+    .profile-img.placeholder .ph-text { opacity: .4; line-height: 1.5; }
+    .profile-img.placeholder .ph-label {
+      font-size: .65rem; font-weight: 600; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--red); opacity: .7;
+      border: 1px solid var(--red-dim); padding: .25rem .6rem;
+    }
+
+    .profile-badge {
+      position: absolute; bottom: -1px; left: -1px; right: -1px;
+      z-index: 2;
+      background: rgba(255,26,26,.9);
+      padding: .6rem 1rem;
+      font-size: .65rem;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: #000;
+      text-align: center;
+    }
+
+    /* ── STATS ROW ── */
+    .stats {
+      display: grid; grid-template-columns: repeat(4,1fr);
+      border: 1px solid var(--border);
+      margin-bottom: 4rem;
+      opacity: 0;
+      animation: fadeUp .5s .15s forwards;
+    }
+    .stat {
+      padding: 1.5rem 1.2rem; text-align: center;
+      border-right: 1px solid var(--border);
+      transition: background .2s;
+    }
+    .stat:last-child { border-right: none; }
+    .stat:hover { background: var(--surface); }
+    .stat-n {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.2rem; line-height: 1;
+      color: var(--red);
+      text-shadow: 0 0 20px rgba(255,26,26,.5);
+      margin-bottom: .25rem;
+    }
+    .stat-l { font-size: .65rem; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: var(--gray); }
+
+    /* ── SECTION TITLE ── */
+    .sec-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1rem;
+      letter-spacing: .2em;
+      color: var(--red);
+      text-transform: uppercase;
+      margin-bottom: .4rem;
+      text-shadow: 0 0 10px rgba(255,26,26,.4);
+    }
+    .sec-title::before { content: '// '; opacity: .5; }
+    h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2rem, 4vw, 3rem);
+      letter-spacing: .06em;
+      color: var(--white);
+      margin-bottom: 2rem;
+      text-shadow: 0 0 30px rgba(255,255,255,.1);
+    }
+
+    /* ── PROJECT GRID ── */
+    .project-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      margin-bottom: 1px;
+    }
+    .project-card {
+      background: var(--bg);
+      text-decoration: none;
+      color: inherit;
+      display: flex; flex-direction: column;
+      transition: background .2s;
+      opacity: 0;
+      animation: fadeUp .4s forwards;
+      position: relative;
+      overflow: hidden;
+    }
+    .project-card:nth-child(1) { animation-delay: .1s }
+    .project-card:nth-child(2) { animation-delay: .15s }
+    .project-card:nth-child(3) { animation-delay: .2s }
+    .project-card:nth-child(4) { animation-delay: .25s }
+    .project-card:nth-child(5) { animation-delay: .3s }
+    .project-card:nth-child(6) { animation-delay: .35s }
+
+    .project-card:hover { background: var(--surface); }
+    .project-card:hover .proj-img-wrap::after { opacity: 1; }
+    .project-card:hover .proj-title { color: var(--red); text-shadow: 0 0 12px rgba(255,26,26,.5); }
+
+    .proj-img-wrap {
+      width: 100%;
+      aspect-ratio: 16/9;
+      overflow: hidden;
+      position: relative;
+      background: var(--surface);
+    }
+    .proj-img-wrap::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(255,26,26,.15), transparent);
+      opacity: 0; transition: opacity .2s;
+    }
+    .proj-img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform .3s;
+    }
+    .project-card:hover .proj-img { transform: scale(1.04); }
+
+    /* placeholder screenshot */
+    .proj-img.ph {
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column; gap: .5rem;
+      background: var(--surface);
+      color: var(--gray);
+      font-size: .65rem; letter-spacing: .06em; text-transform: uppercase;
+      text-align: center; padding: 1rem;
+    }
+    .proj-img.ph .ph-i { font-size: 2rem; opacity: .25; }
+    .proj-img.ph .ph-t { opacity: .3; }
+    .proj-img.ph .ph-hint { font-size: .58rem; opacity: .4; margin-top: .3rem; color: var(--red); }
+
+    .proj-body { padding: 1.1rem 1.2rem 1.4rem; flex: 1; display: flex; flex-direction: column; }
+    .proj-year { font-size: .62rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--red); margin-bottom: .35rem; }
+    .proj-title { font-size: .95rem; font-weight: 600; color: var(--white); margin-bottom: .5rem; transition: color .2s, text-shadow .2s; }
+    .proj-desc { font-size: .8rem; color: var(--text); line-height: 1.6; flex: 1; font-weight: 300; margin-bottom: .9rem; }
+    .proj-tags { display: flex; gap: .35rem; flex-wrap: wrap; }
+    .proj-tag { font-size: .6rem; font-weight: 500; letter-spacing: .06em; padding: .18rem .55rem; border: 1px solid var(--dim); color: var(--gray); }
+    .proj-tag.award { border-color: var(--red-dim); color: var(--red); }
+
+    .proj-arrow {
+      position: absolute; top: 1rem; right: 1rem;
+      width: 26px; height: 26px;
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: .75rem; color: var(--gray);
+      opacity: 0; transition: opacity .2s;
+    }
+    .project-card:hover .proj-arrow { opacity: 1; }
+
+    /* ── NOW ── */
+    .now-grid {
+      display: grid; grid-template-columns: 1fr 280px;
+      gap: 4rem; align-items: start;
+    }
+    .now-text p {
+      font-size: .95rem; color: var(--text); line-height: 1.8; margin-bottom: 1rem; font-weight: 300;
+      opacity: 0; animation: fadeUp .4s forwards;
+    }
+    .now-text p:nth-child(1){ animation-delay:.05s }
+    .now-text p:nth-child(2){ animation-delay:.10s }
+    .now-text p:nth-child(3){ animation-delay:.15s }
+    .now-text p:nth-child(4){ animation-delay:.20s }
+    .now-text p:nth-child(5){ animation-delay:.25s }
+    .now-text p:nth-child(6){ animation-delay:.30s }
+    .now-text p a { color: var(--red); text-decoration: none; transition: opacity .15s; }
+    .now-text p a:hover { opacity: .7; }
+    .now-text p s { opacity: .3; text-decoration-color: var(--dim); }
+
+    .now-sidebar { opacity: 0; animation: fadeUp .4s .1s forwards; }
+    .now-profile {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 3/4;
+      margin-bottom: 1.5rem;
+    }
+    .now-profile::before {
+      content: '';
+      position: absolute; inset: -2px;
+      background: linear-gradient(160deg, var(--red), transparent 60%);
+      z-index: 0;
+    }
+    .now-profile-img {
+      position: relative; z-index: 1;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      background: var(--surface);
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column; gap: .8rem;
+      color: var(--gray); text-align: center; padding: 1.5rem;
+    }
+    .now-profile-img .ph-icon { font-size: 2.5rem; opacity: .2; }
+    .now-profile-img .ph-label { font-size: .6rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--red); opacity: .6; border: 1px solid var(--red-dim); padding: .2rem .5rem; }
+    .now-profile-img .ph-text { font-size: .7rem; opacity: .35; line-height: 1.4; }
+
+    .info-list { list-style: none; }
+    .info-list li { display: flex; justify-content: space-between; padding: .55rem 0; border-bottom: 1px solid var(--border); font-size: .78rem; }
+    .info-list .k { color: var(--gray); font-weight: 500; }
+    .info-list .v { color: var(--white); text-align: right; }
+    .info-list .v.red { color: var(--red); text-shadow: 0 0 6px rgba(255,26,26,.4); }
 
     /* ── WORK ── */
-    .work-content {
-      max-width: 640px;
-      opacity: 0;
-      animation: appear .35s .05s forwards;
+    .work-layout {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      opacity: 0; animation: fadeUp .4s .05s forwards;
     }
-    .work-content p { font-size: 1.05rem; margin-bottom: 1.2rem; color: var(--fg); line-height: 1.7; }
-    .work-content ul { list-style: none; margin-bottom: 2rem; }
-    .work-content ul li {
-      font-size: 1.05rem;
-      padding: .32rem 0;
-      color: var(--fg);
+    .work-block h3 {
+      font-size: .65rem; font-weight: 700; letter-spacing: .15em;
+      text-transform: uppercase; color: var(--red);
+      margin-bottom: 1rem; padding-bottom: .5rem;
+      border-bottom: 1px solid var(--border);
     }
-    .work-content ul li a { color: var(--link); text-decoration: none; }
-    .work-content ul li a:hover { opacity: .7; }
-    .work-h3 {
-      font-size: .72rem;
-      font-weight: 700;
-      letter-spacing: .12em;
-      text-transform: uppercase;
-      color: var(--dim);
-      margin: 1.8rem 0 .7rem;
+    .work-item { padding: .6rem 0; border-bottom: 1px solid var(--border); }
+    .work-item-top { display: flex; justify-content: space-between; margin-bottom: .15rem; }
+    .work-item-name { font-size: .85rem; font-weight: 500; color: var(--white); }
+    .work-item-time { font-size: .72rem; color: var(--gray); }
+    .work-item-sub { font-size: .75rem; color: var(--gray); font-weight: 300; }
+
+    .skill-item { display: flex; justify-content: space-between; padding: .45rem 0; border-bottom: 1px solid var(--border); font-size: .82rem; }
+    .skill-item .k { color: var(--white); }
+    .skill-item .t { font-size: .65rem; color: var(--gray); letter-spacing: .04em; }
+
+    .award-neon {
+      grid-column: 1/-1;
+      border: 1px solid var(--red-dim);
+      background: rgba(255,26,26,.04);
+      padding: 1rem 1.4rem;
+      margin-bottom: -.5rem;
+      box-shadow: inset 0 0 30px rgba(255,26,26,.04), 0 0 20px rgba(255,26,26,.08);
     }
-    .work-row { display: flex; justify-content: space-between; padding: .32rem 0; font-size: 1rem; border-bottom: 1px solid rgba(255,255,255,.05); }
-    body.light .work-row { border-bottom-color: rgba(0,0,0,.07); }
-    .work-row-right { color: var(--dim); font-size: .85rem; }
-    .award-block {
-      margin: .5rem 0 1.5rem;
-      padding: .75rem 1rem;
-      border-left: 3px solid var(--accent);
-      background: rgba(200,169,110,.06);
-      font-size: .95rem;
-      color: var(--desc);
+    .award-neon strong { color: var(--red); text-shadow: 0 0 10px rgba(255,26,26,.5); }
+    .award-neon span { font-size: .82rem; color: var(--text); }
+
+    .work-links { margin-top: 2rem; grid-column: 1/-1; }
+    .work-links a {
+      display: inline-block; margin-right: 1.5rem; margin-bottom: .5rem;
+      font-size: .78rem; color: var(--gray); text-decoration: none;
+      border-bottom: 1px solid var(--border); transition: color .2s, border-color .2s;
     }
-    .award-block strong { color: var(--accent); }
+    .work-links a:hover { color: var(--red); border-color: var(--red); }
 
     /* ── ELSEWHERE ── */
-    .links { margin-top: 3rem; }
-    .links ul { list-style: none; display: flex; gap: 1.8rem; flex-wrap: wrap; }
-    .links ul li a { color: var(--dim); text-decoration: none; font-size: .9rem; transition: color .15s; }
-    .links ul li a:hover { color: var(--fg); }
+    .elsewhere {
+      margin-top: 4rem;
+      border-top: 1px solid var(--border);
+      padding-top: 2rem;
+      display: flex; gap: 2rem; flex-wrap: wrap;
+      opacity: 0; animation: fadeUp .4s .2s forwards;
+    }
+    .elsewhere a {
+      font-size: .72rem; font-weight: 500; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--gray); text-decoration: none;
+      transition: color .2s;
+    }
+    .elsewhere a:hover { color: var(--red); text-shadow: 0 0 8px rgba(255,26,26,.4); }
 
     /* ── OUTRO ── */
     .outro {
-      margin-top: 4rem;
+      margin-top: 4rem; padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
       display: flex; gap: 2rem;
-      border-top: 1px solid rgba(255,255,255,.06);
-      padding-top: 1.5rem;
     }
-    body.light .outro { border-top-color: rgba(0,0,0,.1); }
-    .outro a { color: var(--dim); text-decoration: none; font-size: .85rem; transition: color .15s; }
-    .outro a:hover { color: var(--fg); }
-
-    /* ── THEME TOGGLE ── */
-    .toggle {
-      position: fixed; bottom: 1.4rem; right: 1.4rem;
-      display: flex; gap: .4rem;
+    .outro a {
+      font-size: .7rem; font-weight: 500; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--gray); text-decoration: none; transition: color .2s;
     }
-    .toggle button {
-      background: none; border: 1px solid var(--dim); color: var(--dim);
-      width: 30px; height: 30px; border-radius: 4px; cursor: pointer;
-      font-size: .85rem; line-height: 1; transition: color .15s, border-color .15s;
-    }
-    .toggle button:hover { color: var(--fg); border-color: var(--fg); }
+    .outro a:hover { color: var(--red); }
 
     /* ── ANIMATION ── */
-    @keyframes appear {
-      to { opacity: 1; transform: none; }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: none; }
     }
 
     /* ── RESPONSIVE ── */
-    @media (max-width: 600px) {
-      body { padding: 2.2rem 1.4rem 5rem; }
-      .projects li a { white-space: normal; }
+    @media (max-width: 800px) {
+      .hero { grid-template-columns: 1fr; }
+      .profile-frame { display: none; }
+      .project-grid { grid-template-columns: 1fr; }
+      .now-grid { grid-template-columns: 1fr; }
+      .now-sidebar { display: none; }
+      .work-layout { grid-template-columns: 1fr; }
+      .stats { grid-template-columns: repeat(2,1fr); }
+      .wrap { padding: 0 1.2rem 4rem; }
     }
+
+    /* ── PHOTO SWAP GUIDE ── */
+    /* 
+      TO ADD YOUR REAL PHOTOS:
+      1. Profile: Replace <div class="profile-img placeholder"> with <img class="profile-img" src="photo.jpg"/>
+      2. Projects: Replace <div class="proj-img ph"> with <img class="proj-img" src="screenshot.jpg"/>
+      Put all images in the same folder as index.html
+    */
   </style>
 </head>
-<body class="making dark">
+<body class="making">
 
-  <h1 id="h1">Muhammed Murad Chamaa</h1>
+<div class="wrap">
 
-  <p class="intro">
-    <a href="#" class="js--making">making things</a>
-    and <a href="#now" class="js--now">doing things</a>
-    and <a href="#work" class="js--work">working</a>
-  </p>
+  <!-- NAV -->
+  <nav>
+    <a class="nav-logo js--making" href="#">MMC</a>
+    <ul class="nav-links">
+      <li><a href="#"    class="js--making active-making">Projects</a></li>
+      <li><a href="#now" class="js--now active-now">Now</a></li>
+      <li><a href="#work" class="js--work active-work">Work</a></li>
+    </ul>
+  </nav>
 
   <!-- ══ MAKING ══ -->
-  <section class="making projects">
+  <section class="making">
+
+    <!-- HERO -->
+    <div class="hero">
+      <div>
+        <div class="hero-title">
+          <span class="white">MUHAMMED</span><br/>
+          <span class="red">MURAD</span><br/>
+          <span class="white">CHAMAA</span>
+        </div>
+        <p class="hero-sub">
+          Computer engineer · Game developer · Award-winning researcher.
+          Building games, ML systems, and quantum experiments from Ankara.
+        </p>
+        <div class="hero-tags">
+          <span class="hero-tag hot">Unity 6</span>
+          <span class="hero-tag hot">Godot 4</span>
+          <span class="hero-tag hot">PyTorch</span>
+          <span class="hero-tag">C#</span>
+          <span class="hero-tag">Python</span>
+          <span class="hero-tag">C++</span>
+          <span class="hero-tag">CCNA ×3</span>
+          <span class="hero-tag hot">🏆 TEKNOFEST 2025</span>
+        </div>
+        <div class="hero-cta">
+          <a href="https://mmuradc.itch.io/" target="_blank" class="btn btn-red">▶ Play my games</a>
+          <a href="#work" class="btn btn-outline js--work">View résumé →</a>
+        </div>
+      </div>
+
+      <!-- PROFILE PHOTO SLOT -->
+      <div class="profile-frame">
+        <!--
+          SWAP THIS: replace the div below with:
+          <img class="profile-img" src="photo.jpg" alt="Murad"/>
+        -->
+        <div class="profile-img placeholder">
+          <div class="ph-icon">📸</div>
+          <div class="ph-label">Your photo here</div>
+          <div class="ph-text">Replace this div with<br/>&lt;img src="photo.jpg"/&gt;</div>
+        </div>
+        <div class="profile-badge">Gazi University · Ankara · GPA 3.50</div>
+      </div>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats">
+      <div class="stat"><div class="stat-n">3.50</div><div class="stat-l">GPA / 4.00</div></div>
+      <div class="stat"><div class="stat-n">4+</div><div class="stat-l">Games Built</div></div>
+      <div class="stat"><div class="stat-n">3</div><div class="stat-l">CCNA Certs</div></div>
+      <div class="stat"><div class="stat-n">#5</div><div class="stat-l">TEKNOFEST 2025</div></div>
+    </div>
+
+    <!-- PROJECTS -->
+    <div class="sec-title">Selected work</div>
     <h2>Projects</h2>
-    <ul>
-      <li><a href="https://mmuradc.itch.io/" target="_blank">
-        <span class="year">2024</span><span class="name">World's Hardest Golf Game</span><span class="description">A brutally difficult 2D golf game — patience as mechanic (live on itch.io)</span>
-      </a></li>
-      <li><a href="#">
-        <span class="year">2024</span><span class="name">TimeForger</span><span class="description">2D platformer with time manipulation — rewind, freeze, fast-forward reality</span>
-      </a></li>
-      <li><a href="#">
-        <span class="year">2024</span><span class="name">5G Model-Based Positioning</span><span class="description">Fingerprinting + multilateration + ML for indoor positioning. 70% accuracy gain<span class="badge">🏆 TEKNOFEST 2025 · 5th place</span></span>
-      </a></li>
-      <li><a href="#">
-        <span class="year">2024</span><span class="name">Terraria-Style Side-Scroller</span><span class="description">Pixel art platformer with procedural tilemap, hold-to-mine, 3-slot inventory</span>
-      </a></li>
-      <li><a href="#">
-        <span class="year">2024</span><span class="name">Collve</span><span class="description">2D game project in active development</span>
-      </a></li>
-      <li><a href="#">
-        <span class="year">2024</span><span class="name">Local LLM Deployment</span><span class="description">Running large language models on low-spec hardware via quantization + OpenWebUI</span>
-      </a></li>
-    </ul>
-  </section>
+    <div class="project-grid">
 
-  <section class="making links">
-    <h2 style="font-size:2rem; margin-top: 3rem;">Elsewhere</h2>
-    <ul>
-      <li><a href="mailto:141.muh.mur.cha@gmail.com">email</a></li>
-      <li><a href="https://github.com/mmuradc" target="_blank">github</a></li>
-      <li><a href="https://linkedin.com/in/muhammed-murad-chamaa-a4216b28a" target="_blank">linkedin</a></li>
-      <li><a href="https://mmuradc.itch.io/" target="_blank">itch.io</a></li>
-    </ul>
-  </section>
+      <a class="project-card" href="https://mmuradc.itch.io/" target="_blank">
+        <div class="proj-img-wrap">
+          <!-- SWAP: <img class="proj-img" src="golf-screenshot.jpg"/> -->
+          <div class="proj-img ph">
+            <div class="ph-i">⛳</div>
+            <div class="ph-t">Golf Game Screenshot</div>
+            <div class="ph-hint">replace with &lt;img src="golf.jpg"/&gt;</div>
+          </div>
+        </div>
+        <div class="proj-arrow">↗</div>
+        <div class="proj-body">
+          <div class="proj-year">2024 · Published</div>
+          <div class="proj-title">World's Hardest Golf Game</div>
+          <div class="proj-desc">A brutally difficult 2D golf game. Patience is the only mechanic that matters. Live on itch.io.</div>
+          <div class="proj-tags"><span class="proj-tag">Unity 6</span><span class="proj-tag">C#</span><span class="proj-tag">itch.io</span></div>
+        </div>
+      </a>
 
-  <div class="making outro">
-    <a href="#now" class="js--now">Now</a>
-    <a href="#work" class="js--work">Work</a>
-  </div>
+      <a class="project-card" href="#">
+        <div class="proj-img-wrap">
+          <!-- SWAP: <img class="proj-img" src="timeforger-screenshot.jpg"/> -->
+          <div class="proj-img ph">
+            <div class="ph-i">⏳</div>
+            <div class="ph-t">TimeForger Screenshot</div>
+            <div class="ph-hint">replace with &lt;img src="timeforger.jpg"/&gt;</div>
+          </div>
+        </div>
+        <div class="proj-arrow">↗</div>
+        <div class="proj-body">
+          <div class="proj-year">2024</div>
+          <div class="proj-title">TimeForger</div>
+          <div class="proj-desc">2D platformer with time manipulation. Rewind, freeze, fast-forward reality to solve puzzles.</div>
+          <div class="proj-tags"><span class="proj-tag">Godot 4</span><span class="proj-tag">GDScript</span></div>
+        </div>
+      </a>
+
+      <a class="project-card" href="#">
+        <div class="proj-img-wrap">
+          <!-- SWAP: <img class="proj-img" src="5g-screenshot.jpg"/> -->
+          <div class="proj-img ph">
+            <div class="ph-i">🛰️</div>
+            <div class="ph-t">5G Project Screenshot</div>
+            <div class="ph-hint">replace with &lt;img src="5g.jpg"/&gt;</div>
+          </div>
+        </div>
+        <div class="proj-arrow">↗</div>
+        <div class="proj-body">
+          <div class="proj-year">2024 · Award</div>
+          <div class="proj-title">5G Model-Based Positioning</div>
+          <div class="proj-desc">Fingerprinting + multilateration + ML for indoor 5G positioning. 70% accuracy improvement.</div>
+          <div class="proj-tags"><span class="proj-tag">PyTorch</span><span class="proj-tag">XGBoost</span><span class="proj-tag award">🏆 5th Place</span></div>
+        </div>
+      </a>
+
+      <a class="project-card" href="#">
+        <div class="proj-img-wrap">
+          <div class="proj-img ph">
+            <div class="ph-i">⛏️</div>
+            <div class="ph-t">Side-Scroller Screenshot</div>
+            <div class="ph-hint">replace with &lt;img src="terraria.jpg"/&gt;</div>
+          </div>
+        </div>
+        <div class="proj-arrow">↗</div>
+        <div class="proj-body">
+          <div class="proj-year">2024 · In Progress</div>
+          <div class="proj-title">Terraria-Style Side-Scroller</div>
+          <div class="proj-desc">Pixel art (16×16) platformer. Procedural tilemap, 3-slot inventory, hold-to-mine mechanics.</div>
+          <div class="proj-tags"><span class="proj-tag">Unity 6</span><span class="proj-tag">C#</span><span class="proj-tag">New Input System</span></div>
+        </div>
+      </a>
+
+      <a class="project-card" href="#">
+        <div class="proj-img-wrap">
+          <div class="proj-img ph">
+            <div class="ph-i">🏗️</div>
+            <div class="ph-t">Collve Screenshot</div>
+            <div class="ph-hint">replace with &lt;img src="collve.jpg"/&gt;</div>
+          </div>
+        </div>
+        <div class="proj-arrow">↗</div>
+        <div class="proj-body">
+          <div class="proj-year">2024 · In Dev</div>
+          <div class="proj-title">Collve</div>
+          <div class="proj-desc">2D game project currently in active development.</div>
+          <div class="proj-tags"><span class="proj-tag">Godot 4</span><span class="proj-tag">GDScript</span></div>
+        </div>
+      </a>
+
+      <a class="project-card" href="#">
+        <div class="proj-img-wrap">
+          <div class="proj-img ph">
+            <div class="ph-i">🤖</div>
+            <div class="ph-t">LLM Setup Screenshot</div>
+            <div class="ph-hint">replace with &lt;img src="llm.jpg"/&gt;</div>
+          </div>
+        </div>
+        <div class="proj-arrow">↗</div>
+        <div class="proj-body">
+          <div class="proj-year">2024</div>
+          <div class="proj-title">Local LLM Deployment</div>
+          <div class="proj-desc">Running large language models on low-spec hardware via quantization and OpenWebUI.</div>
+          <div class="proj-tags"><span class="proj-tag">Python</span><span class="proj-tag">OpenWebUI</span><span class="proj-tag">Quantization</span></div>
+        </div>
+      </a>
+
+    </div>
+
+    <div class="elsewhere">
+      <a href="mailto:141.muh.mur.cha@gmail.com">Email</a>
+      <a href="https://github.com/mmuradc" target="_blank">GitHub</a>
+      <a href="https://linkedin.com/in/muhammed-murad-chamaa-a4216b28a" target="_blank">LinkedIn</a>
+      <a href="https://mmuradc.itch.io/" target="_blank">itch.io</a>
+    </div>
+
+    <div class="outro">
+      <a href="#now" class="js--now">Now →</a>
+      <a href="#work" class="js--work">Work →</a>
+    </div>
+
+  </section>
 
   <!-- ══ NOW ══ -->
   <section class="now">
+    <div class="sec-title">Present</div>
     <h2>Now</h2>
-    <div class="now-content">
-      <p>I'm Murad — a Computer Engineering student at Gazi University in Ankara. Third year, GPA 3.50/4.00.</p>
-      <p>I've been building games since I can remember. Currently deep in a <a href="#">Terraria-style pixel platformer</a> with procedural tilemap generation. <s>Sleep</s> Shipping things is the priority.</p>
-      <p>In 2025 my team won the Most Original Software Award at <a href="#">TEKNOFEST</a> and placed 5th nationally for our 5G indoor positioning system — a weird combination of fingerprinting, multilateration, and PyTorch/XGBoost that somehow worked.</p>
-      <p>I chair the Digital Game Design Society at Gazi University. Previously board member of both the R&amp;D team and the Data Science Society. Running communities is harder than it looks.</p>
-      <p>Currently learning: superconducting quantum chip design for TEKNOFEST 2026. Transmon qubits are beautiful and terrifying in equal measure.</p>
-      <p>I work in Unity 6 and Godot 4, mostly C# and GDScript. Python for everything ML-related. Running <a href="#">Arch</a> and <a href="#">Fedora</a> — yes, both.</p>
-      <p>Three languages: Turkish (native), English (C1), Arabic (B1). Working on not mixing them mid-sentence.</p>
+    <div class="now-grid">
+      <div class="now-text">
+        <p>I'm Murad — a Computer Engineering student at Gazi University, Ankara. Third year, GPA 3.50/4.00.</p>
+        <p>I've been building games since I can remember. Currently deep in a <a href="#">Terraria-style pixel platformer</a> with procedural tilemap generation. <s>Sleep</s> Shipping is the priority.</p>
+        <p>In 2025 my team won the <a href="#">Most Original Software Award</a> at TEKNOFEST and placed 5th nationally — our 5G indoor positioning system combined fingerprinting, multilateration, and PyTorch/XGBoost in ways that somehow worked.</p>
+        <p>I chair the Digital Game Design Society at Gazi University. Previously board member of the R&amp;D team and the Data Science Society. Running communities is harder than it looks.</p>
+        <p>Currently learning: superconducting quantum chip design for <a href="#">TEKNOFEST 2026</a>. Transmon qubits are beautiful and terrifying in equal measure.</p>
+        <p>I work in Unity 6 and Godot 4. Python for everything ML. Running <a href="#">Arch</a> and <a href="#">Fedora</a> — yes, both.</p>
+        <p>Turkish (native), English (C1), Arabic (B1).</p>
+      </div>
+
+      <div class="now-sidebar">
+        <!-- PROFILE PHOTO IN NOW -->
+        <div class="now-profile">
+          <!--
+            SWAP: <img class="now-profile-img" src="photo.jpg" alt="Murad"/>
+          -->
+          <div class="now-profile-img">
+            <div class="ph-icon">📸</div>
+            <div class="ph-label">Your photo here</div>
+            <div class="ph-text">Replace with<br/>&lt;img src="photo.jpg"/&gt;</div>
+          </div>
+        </div>
+
+        <ul class="info-list">
+          <li><span class="k">University</span><span class="v">Gazi Üniversitesi</span></li>
+          <li><span class="k">GPA</span><span class="v red">3.50 / 4.00</span></li>
+          <li><span class="k">Location</span><span class="v">Ankara, TR</span></li>
+          <li><span class="k">English</span><span class="v">C1 Advanced</span></li>
+          <li><span class="k">Status</span><span class="v red">Open to roles</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="outro">
+      <a href="#" class="js--making">← Projects</a>
+      <a href="#work" class="js--work">Work →</a>
     </div>
   </section>
-
-  <div class="now outro">
-    <a href="#" class="js--making">Projects</a>
-    <a href="#work" class="js--work">Work</a>
-  </div>
 
   <!-- ══ WORK ══ -->
   <section class="work">
+    <div class="sec-title">Résumé</div>
     <h2>Work</h2>
-    <div class="work-content">
-      <p>Computer Engineering student at Gazi University (2023–present). Available for internships — game dev, ML, systems work.</p>
+    <div class="work-layout">
 
-      <div class="award-block">
-        <strong>TEKNOFEST 2025</strong> — Most Original Software Award · 5th Place, 5G Positioning
+      <div class="award-neon">
+        <strong>🏆 TEKNOFEST 2025</strong><br/>
+        <span>Most Original Software Award · 5th Place — 5G Positioning Category</span>
       </div>
 
-      <div class="work-h3">Experience</div>
-      <div class="work-row"><span>IT Intern — Türkiye İş Kurumu (İŞKUR)</span><span class="work-row-right">Feb–Jun 2025</span></div>
-      <div class="work-row"><span>Chairman — Digital Game Design Society, Gazi</span><span class="work-row-right">Jan 2026–now</span></div>
-      <div class="work-row"><span>Member — Ergenekon R&amp;D Team, Gazi</span><span class="work-row-right">2024–now</span></div>
-      <div class="work-row"><span>Board Member — Data Science Society, Gazi</span><span class="work-row-right">Sep 2024–Apr 2025</span></div>
+      <div class="work-block">
+        <h3>Experience</h3>
+        <div class="work-item">
+          <div class="work-item-top"><span class="work-item-name">IT Intern</span><span class="work-item-time">Feb–Jun 2025</span></div>
+          <div class="work-item-sub">Türkiye İş Kurumu (İŞKUR) · Ankara</div>
+        </div>
+        <div class="work-item">
+          <div class="work-item-top"><span class="work-item-name">Chairman — Game Design Society</span><span class="work-item-time">Jan 2026–now</span></div>
+          <div class="work-item-sub">Gazi University</div>
+        </div>
+        <div class="work-item">
+          <div class="work-item-top"><span class="work-item-name">Member — Ergenekon R&amp;D Team</span><span class="work-item-time">2024–now</span></div>
+          <div class="work-item-sub">Gazi University</div>
+        </div>
+        <div class="work-item">
+          <div class="work-item-top"><span class="work-item-name">Board Member — Data Science Society</span><span class="work-item-time">Sep 2024–Apr 2025</span></div>
+          <div class="work-item-sub">Gazi University</div>
+        </div>
+      </div>
 
-      <div class="work-h3">Skills</div>
-      <div class="work-row"><span>Unity 6 / C#</span><span class="work-row-right">game dev</span></div>
-      <div class="work-row"><span>Godot 4 / GDScript</span><span class="work-row-right">game dev</span></div>
-      <div class="work-row"><span>Python</span><span class="work-row-right">general + ML</span></div>
-      <div class="work-row"><span>C / C++</span><span class="work-row-right">systems</span></div>
-      <div class="work-row"><span>PyTorch · XGBoost · Scikit-Learn</span><span class="work-row-right">ml</span></div>
-      <div class="work-row"><span>NumPy · Pandas</span><span class="work-row-right">data</span></div>
-      <div class="work-row"><span>Git · Linux (Arch, Fedora)</span><span class="work-row-right">tooling</span></div>
-      <div class="work-row"><span>Cisco CCNA ×3</span><span class="work-row-right">networking</span></div>
+      <div class="work-block">
+        <h3>Skills</h3>
+        <div class="skill-item"><span class="k">Unity 6 / C#</span><span class="t">game dev</span></div>
+        <div class="skill-item"><span class="k">Godot 4 / GDScript</span><span class="t">game dev</span></div>
+        <div class="skill-item"><span class="k">Python</span><span class="t">general + ml</span></div>
+        <div class="skill-item"><span class="k">C / C++</span><span class="t">systems</span></div>
+        <div class="skill-item"><span class="k">PyTorch · XGBoost · Scikit-Learn</span><span class="t">ml</span></div>
+        <div class="skill-item"><span class="k">NumPy · Pandas</span><span class="t">data</span></div>
+        <div class="skill-item"><span class="k">Git · Linux (Arch, Fedora)</span><span class="t">tooling</span></div>
+        <div class="skill-item"><span class="k">Cisco CCNA ×3</span><span class="t">networking</span></div>
+      </div>
 
-      <div class="work-h3">Links</div>
-      <ul>
-        <li><a href="https://github.com/mmuradc" target="_blank">GitHub — mmuradc</a></li>
-        <li><a href="https://mmuradc.itch.io/" target="_blank">itch.io — mmuradc</a></li>
-        <li><a href="https://linkedin.com/in/muhammed-murad-chamaa-a4216b28a" target="_blank">LinkedIn</a></li>
-        <li><a href="mailto:141.muh.mur.cha@gmail.com">141.muh.mur.cha@gmail.com</a></li>
-      </ul>
+      <div class="work-links">
+        <a href="https://github.com/mmuradc" target="_blank">GitHub ↗</a>
+        <a href="https://mmuradc.itch.io/" target="_blank">itch.io ↗</a>
+        <a href="https://linkedin.com/in/muhammed-murad-chamaa-a4216b28a" target="_blank">LinkedIn ↗</a>
+        <a href="mailto:141.muh.mur.cha@gmail.com">141.muh.mur.cha@gmail.com</a>
+      </div>
+    </div>
+    <div class="outro">
+      <a href="#" class="js--making">← Projects</a>
+      <a href="#now" class="js--now">Now →</a>
     </div>
   </section>
 
-  <div class="work outro">
-    <a href="#" class="js--making">Projects</a>
-    <a href="#now" class="js--now">Now</a>
-  </div>
-
-  <!-- THEME TOGGLE -->
-  <div class="toggle">
-    <button id="btn-dark"  title="Dark mode">🌙</button>
-    <button id="btn-light" title="Light mode">☀️</button>
-  </div>
+</div><!-- /wrap -->
 
 <script>
   var body = document.body;
 
-  // Auto light/dark by time
-  var h = new Date().getHours();
-  body.classList.toggle('light', h >= 7 && h < 20);
-  body.classList.toggle('dark',  !(h >= 7 && h < 20));
+  function setActive(mode) {
+    document.querySelectorAll('.nav-links a').forEach(function(a) { a.classList.remove('active'); });
+    var map = { making: '.active-making', now: '.active-now', work: '.active-work' };
+    var el = document.querySelector(map[mode]);
+    if (el) el.classList.add('active');
+  }
 
   function switchMode(mode) {
     return function(e) {
@@ -370,50 +823,27 @@
       body.classList.remove('making','now','work');
       body.classList.add(mode);
       history.replaceState(null,'', mode==='making' ? location.pathname : '#'+mode);
+      setActive(mode);
       if (e) window.scrollTo({top:0, behavior:'smooth'});
+      // re-trigger animations
+      setTimeout(function() {
+        document.querySelectorAll('.project-card, .now-text p, .now-sidebar, .work-layout, .hero, .stats, .elsewhere').forEach(function(el) {
+          el.style.animation = 'none';
+          void el.offsetWidth;
+          el.style.animation = '';
+        });
+      }, 10);
     };
   }
 
-  // Wire nav links
   document.querySelectorAll('.js--making').forEach(function(el){ el.addEventListener('click', switchMode('making')); });
   document.querySelectorAll('.js--now').forEach(function(el)   { el.addEventListener('click', switchMode('now')); });
   document.querySelectorAll('.js--work').forEach(function(el)  { el.addEventListener('click', switchMode('work')); });
-  document.getElementById('h1').addEventListener('click', switchMode('making'));
 
-  // Hash on load
   var hash = location.hash;
-  if (hash === '#now') switchMode('now')();
-  else if (hash === '#work') switchMode('work')();
-
-  // Theme buttons
-  document.getElementById('btn-dark').addEventListener('click', function(){
-    body.classList.add('dark'); body.classList.remove('light');
-  });
-  document.getElementById('btn-light').addEventListener('click', function(){
-    body.classList.add('light'); body.classList.remove('dark');
-  });
-
-  // Re-trigger animations on mode switch
-  function retrigger(selector) {
-    document.querySelectorAll(selector).forEach(function(el) {
-      el.style.animation = 'none';
-      void el.offsetWidth;
-      el.style.animation = '';
-    });
-  }
-  var modeMap = {
-    making: '.making.projects li, .making.links',
-    now:    '.now-content',
-    work:   '.work-content'
-  };
-  ['making','now','work'].forEach(function(m) {
-    document.querySelectorAll('.js--'+m).forEach(function(el) {
-      el.addEventListener('click', function(){ setTimeout(function(){ retrigger(modeMap[m]); }, 10); });
-    });
-  });
-  document.getElementById('h1').addEventListener('click', function(){
-    setTimeout(function(){ retrigger(modeMap.making); }, 10);
-  });
+  if (hash === '#now') { body.classList.remove('making'); body.classList.add('now'); setActive('now'); }
+  else if (hash === '#work') { body.classList.remove('making'); body.classList.add('work'); setActive('work'); }
+  else setActive('making');
 </script>
 </body>
 </html>
