@@ -559,7 +559,71 @@
       color: var(--red); 
     }
 
+
+    /* ── PHOTO SIDEBARS ── */
+    .photo-sidebar {
+      position: fixed;
+      top: 0;
+      width: 220px;
+      height: 100vh;
+      background: var(--surface);
+      overflow: hidden;
+      z-index: 50;
+      display: none;
+    }
+    .photo-sidebar.left {
+      left: 0;
+      border-right: 1px solid var(--border);
+    }
+    .photo-sidebar.right {
+      right: 0;
+      border-left: 1px solid var(--border);
+    }
+    
+    @media (min-width: 1450px) {
+      .photo-sidebar { display: flex; flex-direction: column; }
+      body { padding-left: 220px; padding-right: 220px; }
+    }
+
+    .marquee-track {
+      display: flex;
+      flex-direction: column;
+    }
+    .photo-sidebar.right .marquee-track {
+      animation: scrollVertical 30s linear infinite;
+    }
+    .photo-sidebar.left .marquee-track {
+      animation: scrollVerticalReverse 30s linear infinite;
+    }
+
+    .marquee-track:hover {
+      animation-play-state: paused;
+    }
+
+    .marquee-img {
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
+      border-bottom: 1px solid var(--border);
+      opacity: 0.5;
+      transition: all 0.3s;
+    }
+
+    .marquee-img:hover {
+      opacity: 1;
+    }
+
+    @keyframes scrollVertical {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-50%); }
+    }
+    @keyframes scrollVerticalReverse {
+      0% { transform: translateY(-50%); }
+      100% { transform: translateY(0); }
+    }
+
     /* ── ANIMATIONS ── */
+
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(10px); }
       to   { opacity: 1; transform: none; }
@@ -589,7 +653,16 @@
 <body class="making">
 <div class="bg-glow-orange"></div>
 
+
+<div class="photo-sidebar left">
+  <div class="marquee-track" id="marquee-track-left"></div>
+</div>
+<div class="photo-sidebar right">
+  <div class="marquee-track" id="marquee-track-right"></div>
+</div>
+
 <div class="wrap">
+
 
   <!-- NAV -->
   <nav>
@@ -607,16 +680,16 @@
     <!-- HERO -->
     <div class="hero">
       <div>
-        <div class="hero-title">
+        <div class="hero-title" id="hero-title">
           <span class="white">MUHAMMED</span><br/>
           <span class="red">MURAD</span><br/>
           <span class="white">CHAMAA</span>
         </div>
-        <p class="hero-sub">
+        <p class="hero-sub" id="hero-sub">
           Computer engineer · Game developer · Award-winning researcher.
           Building games, ML systems, and quantum experiments from Ankara.
         </p>
-        <div class="hero-tags">
+        <div class="hero-tags" id="hero-tags">
           <span class="hero-tag hot">Unity 6</span>
           <span class="hero-tag hot">Godot 4</span>
           <span class="hero-tag hot">PyTorch</span>
@@ -634,7 +707,7 @@
 
       <!-- PROFILE PHOTO SLOT -->
       <div class="profile-frame">
-        <img class="profile-img" src="murad_profile_picture.jpg" alt="Muhammed Murad Chamaa"/>
+        <img class="profile-img" id="profile-img" src="murad_profile_picture.jpg" alt="Muhammed Murad Chamaa"/>
         <div class="profile-badge">Gazi University · Ankara · GPA 3.50</div>
       </div>
     </div>
@@ -650,207 +723,7 @@
     <!-- PROJECTS -->
     <div class="sec-title">Selected work</div>
     <h2>Projects</h2>
-    <div class="project-grid">
-
-      <a class="project-card" href="#">
-        <div class="proj-img-wrap">
-          <img class="proj-img" src="qitap_preview.png" alt="Qitap Quantum Project Preview"/>
-        </div>
-        <div class="proj-arrow">↗</div>
-        <div class="proj-body">
-          <div class="proj-year">2026 · In Progress</div>
-          <div class="proj-title">Qitap — Quantum Analysis</div>
-          <div class="proj-desc">Transmon qubit energy level and anharmonicity analysis tool. Designing superconducting chips for TEKNOFEST 2026.</div>
-          <div class="proj-tags"><span class="proj-tag">Python</span><span class="proj-tag">Quantum Computing</span><span class="proj-tag">Physics</span></div>
-        </div>
-      </a>
-
-      <a class="project-card" href="https://mmuradc.itch.io/timeforger" target="_blank" rel="noopener noreferrer">
-        <div class="proj-img-wrap">
-          <img class="proj-img" src="timeforger_preview.png" alt="TimeForger Screenshot"/>
-        </div>
-        <div class="proj-arrow">↗</div>
-        <div class="proj-body">
-          <div class="proj-year">2026</div>
-          <div class="proj-title">TimeForger</div>
-          <div class="proj-desc">2D platformer with time manipulation. Rewind, freeze, fast-forward reality to solve puzzles.</div>
-          <div class="proj-tags"><span class="proj-tag">Godot 4</span><span class="proj-tag">GDScript</span></div>
-        </div>
-      </a>
-
-      <a class="project-card" href="#">
-        <div class="proj-img-wrap">
-          <img class="proj-img" src="altitude_zero_preview.png" alt="Altitude Zero Screenshot"/>
-        </div>
-        <div class="proj-arrow">↗</div>
-        <div class="proj-body">
-          <div class="proj-year">2026</div>
-          <div class="proj-title">Altitude Zero</div>
-          <div class="proj-desc">High-speed air racing and flight simulation. Master the skies with precision maneuvers.</div>
-          <div class="proj-tags"><span class="proj-tag">Unity</span><span class="proj-tag">C#</span><span class="proj-tag">Flight Sim</span></div>
-        </div>
-      </a>
-
-      <a class="project-card" href="https://mmuradc.itch.io/" target="_blank">
-        <div class="proj-img-wrap">
-          <img class="proj-img" src="twhgg_preview.png" alt="World's Hardest Golf Game Screenshot"/>
-        </div>
-        <div class="proj-arrow">↗</div>
-        <div class="proj-body">
-          <div class="proj-year">2024 · Published</div>
-          <div class="proj-title">World's Hardest Golf Game</div>
-          <div class="proj-desc">A brutally difficult 2D golf game. Patience is the only mechanic that matters. Live on itch.io.</div>
-          <div class="proj-tags"><span class="proj-tag">Unity 6</span><span class="proj-tag">C#</span><span class="proj-tag">itch.io</span></div>
-        </div>
-      </a>
-
-      <a class="project-card" href="#">
-        <div class="proj-img-wrap">
-          <div class="proj-img ph">
-            <div class="ph-i">🛰️</div>
-            <div class="ph-t">5G Project Screenshot</div>
-            <div class="ph-hint">replace with &lt;img src="5g.jpg"/&gt;</div>
-          </div>
-        </div>
-        <div class="proj-arrow">↗</div>
-        <div class="proj-body">
-          <div class="proj-year">2024 · Award</div>
-          <div class="proj-title">5G Model-Based Positioning</div>
-          <div class="proj-desc">Fingerprinting + multilateration + ML for indoor 5G positioning. 70% accuracy improvement.</div>
-          <div class="proj-tags"><span class="proj-tag">PyTorch</span><span class="proj-tag">XGBoost</span><span class="proj-tag award">🏆 5th Place</span></div>
-        </div>
-      </a>
-
-      <a class="project-card" href="#">
-        <div class="proj-img-wrap">
-          <img class="proj-img" src="tok_stock_preview.jpg" alt="Tok-Stock Management System Screenshot"/>
-        </div>
-        <div class="proj-arrow">↗</div>
-        <div class="proj-body">
-          <div class="proj-year">2026</div>
-          <div class="proj-title">Tok-Stock Management</div>
-          <div class="proj-desc">Industrial stock management system with Dockerized services (ZenCart, MariaDB, NGINX). Hybrid Linux support.</div>
-          <div class="proj-tags"><span class="proj-tag">PHP</span><span class="proj-tag">Docker</span><span class="proj-tag">MariaDB</span></div>
-        </div>
-      </a>
-
-      <a class="project-card" href="#">
-        <div class="proj-img-wrap">
-          <img class="proj-img" src="divide_et_vince_preview.jpg" alt="Divide et Vince Screenshot"/>
-        </div>
-        <div class="proj-arrow">↗</div>
-        <div class="proj-body">
-          <div class="proj-year">2025</div>
-          <div class="proj-title">Divide et Vince</div>
-          <div class="proj-desc">Strategic kingdom expansion game. Manage resources, trade, and conquer territories with unique card mechanics.</div>
-          <div class="proj-tags"><span class="proj-tag">Strategy</span><span class="proj-tag">Card Game</span></div>
-        </div>
-      </a>
-
-      <a class="project-card" href="#">
-        <div class="proj-img-wrap">
-          <img class="proj-img" src="mikuri_preview.png" alt="MiKuri Project Screenshot"/>
-        </div>
-        <div class="proj-arrow">↗</div>
-        <div class="proj-body">
-          <div class="proj-year">2024</div>
-          <div class="proj-title">MiKuri BETA</div>
-          <div class="proj-desc">A Pokemon-inspired RPG developed as a university project. Features turn-based combat and creature collection.</div>
-          <div class="proj-tags"><span class="proj-tag">C#</span><span class="proj-tag">Unity</span><span class="proj-tag">RPG</span></div>
-        </div>
-      </a>
-
-      <a class="project-card" href="#">
-        <div class="proj-img-wrap">
-          <img class="proj-img" src="bumin_preview.png" alt="Bumin Game Screenshot"/>
-        </div>
-        <div class="proj-arrow">↗</div>
-        <div class="proj-body">
-          <div class="proj-year">2025</div>
-          <div class="proj-title">Bumin: The Game</div>
-          <div class="proj-desc">An immersive adventure game built with Godot. Explore a rich world with procedural elements and stylized art.</div>
-          <div class="proj-tags"><span class="proj-tag">Godot</span><span class="proj-tag">GDScript</span></div>
-        </div>
-      </a>
-
-      <a class="project-card" href="#">
-        <div class="proj-img-wrap">
-          <img class="proj-img" src="god_of_gamble_preview.png" alt="God of Gamble Screenshot"/>
-        </div>
-        <div class="proj-arrow">↗</div>
-        <div class="proj-body">
-          <div class="proj-year">2025</div>
-          <div class="proj-title">God of Gamble</div>
-          <div class="proj-desc">High-stakes action game with a gambling theme. Master the dice and win big against challenging bosses.</div>
-          <div class="proj-tags"><span class="proj-tag">Unity</span><span class="proj-tag">C#</span><span class="proj-tag">Action</span></div>
-        </div>
-      </a>
-
-      <a class="project-card" href="#">
-        <div class="proj-img-wrap">
-          <div class="proj-img ph">
-            <div class="ph-i">🔨</div>
-            <div class="ph-t">Nailitorfailit</div>
-          </div>
-        </div>
-        <div class="proj-arrow">↗</div>
-        <div class="proj-body">
-          <div class="proj-year">2026</div>
-          <div class="proj-title">Nail it or Fail it</div>
-          <div class="proj-desc">Multiplayer physics-based platformer built with Mirror. Skill and precision are your only tools.</div>
-          <div class="proj-tags"><span class="proj-tag">Unity</span><span class="proj-tag">Mirror</span><span class="proj-tag">Multiplayer</span></div>
-        </div>
-      </a>
-
-      <a class="project-card" href="#">
-        <div class="proj-img-wrap">
-          <div class="proj-img ph">
-            <div class="ph-i">🃏</div>
-            <div class="ph-t">The Fool's Journey</div>
-          </div>
-        </div>
-        <div class="proj-arrow">↗</div>
-        <div class="proj-body">
-          <div class="proj-year">2024</div>
-          <div class="proj-title">The Fool's Journey</div>
-          <div class="proj-desc">A mobile adventure game with deep narrative and unique mechanics. Built for Android.</div>
-          <div class="proj-tags"><span class="proj-tag">Android</span><span class="proj-tag">Java/Kotlin</span></div>
-        </div>
-      </a>
-
-      <a class="project-card" href="#">
-        <div class="proj-img-wrap">
-          <div class="proj-img ph">
-            <div class="ph-i">⚔️</div>
-            <div class="ph-t">Ronin Boss Fight</div>
-          </div>
-        </div>
-        <div class="proj-arrow">↗</div>
-        <div class="proj-body">
-          <div class="proj-year">2025</div>
-          <div class="proj-title">Ronin Boss Fight</div>
-          <div class="proj-desc">Stylized 3D boss fight game. Face off against a powerful Ronin in a beautiful, atmospheric environment.</div>
-          <div class="proj-tags"><span class="proj-tag">Unity</span><span class="proj-tag">C#</span><span class="proj-tag">3D</span></div>
-        </div>
-      </a>
-
-      <a class="project-card" href="#">
-        <div class="proj-img-wrap">
-          <div class="proj-img ph">
-            <div class="ph-i">🗄️</div>
-            <div class="ph-t">Ludus Digital Game</div>
-          </div>
-        </div>
-        <div class="proj-arrow">↗</div>
-        <div class="proj-body">
-          <div class="proj-year">2024</div>
-          <div class="proj-title">Ludus Digital Game</div>
-          <div class="proj-desc">Comprehensive database project for a digital game platform. Designed for scalability and performance.</div>
-          <div class="proj-tags"><span class="proj-tag">SQL</span><span class="proj-tag">Database Design</span></div>
-        </div>
-      </a>
-
-    </div>
+    <div class="project-grid" id="project-grid"></div>
 
     <div class="elsewhere">
       <a href="mailto:141.muh.mur.cha@gmail.com">Email</a>
@@ -902,61 +775,7 @@
     </div>
   </section>
 
-  <!-- ══ WORK ══ -->
-  <section class="work">
-    <div class="sec-title">Résumé</div>
-    <h2>Work</h2>
-    <div class="work-layout">
-
-      <div class="award-neon">
-        <strong>🏆 TEKNOFEST 2025</strong><br/>
-        <span>Most Original Software Award · 5th Place — 5G Positioning Category</span>
-      </div>
-
-      <div class="work-block">
-        <h3>Experience</h3>
-        <div class="work-item">
-          <div class="work-item-top"><span class="work-item-name">IT Intern</span><span class="work-item-time">Feb–Jun 2025</span></div>
-          <div class="work-item-sub">Türkiye İş Kurumu (İŞKUR) · Ankara</div>
-        </div>
-        <div class="work-item">
-          <div class="work-item-top"><span class="work-item-name">Chairman — Game Design Society</span><span class="work-item-time">Jan 2026–now</span></div>
-          <div class="work-item-sub">Gazi University</div>
-        </div>
-        <div class="work-item">
-          <div class="work-item-top"><span class="work-item-name">Member — Ergenekon R&amp;D Team</span><span class="work-item-time">2024–now</span></div>
-          <div class="work-item-sub">Gazi University</div>
-        </div>
-        <div class="work-item">
-          <div class="work-item-top"><span class="work-item-name">Board Member — Data Science Society</span><span class="work-item-time">Sep 2024–Apr 2025</span></div>
-          <div class="work-item-sub">Gazi University</div>
-        </div>
-      </div>
-
-      <div class="work-block">
-        <h3>Skills</h3>
-        <div class="skill-item"><span class="k">Unity 6 / C#</span><span class="t">game dev</span></div>
-        <div class="skill-item"><span class="k">Godot 4 / GDScript</span><span class="t">game dev</span></div>
-        <div class="skill-item"><span class="k">Python</span><span class="t">general + ml</span></div>
-        <div class="skill-item"><span class="k">C / C++</span><span class="t">systems</span></div>
-        <div class="skill-item"><span class="k">PyTorch · XGBoost · Scikit-Learn</span><span class="t">ml</span></div>
-        <div class="skill-item"><span class="k">NumPy · Pandas</span><span class="t">data</span></div>
-        <div class="skill-item"><span class="k">Git · Linux (Arch, Fedora)</span><span class="t">tooling</span></div>
-        <div class="skill-item"><span class="k">Cisco CCNA ×3</span><span class="t">networking</span></div>
-      </div>
-
-      <div class="work-links">
-        <a href="https://github.com/mmuradc" target="_blank">GitHub ↗</a>
-        <a href="https://mmuradc.itch.io/" target="_blank">itch.io ↗</a>
-        <a href="https://linkedin.com/in/muhammed-murad-chamaa-a4216b28a" target="_blank">LinkedIn ↗</a>
-        <a href="mailto:141.muh.mur.cha@gmail.com">141.muh.mur.cha@gmail.com</a>
-      </div>
-    </div>
-    <div class="outro">
-      <a href="#" class="js--making">← Projects</a>
-      <a href="#now" class="js--now">Now →</a>
-    </div>
-  </section>
+  <!-- ══ REMOVED WORK SECTION ══ -->
 
 </div><!-- /wrap -->
 
@@ -998,5 +817,96 @@
   else if (hash === '#work') { body.classList.remove('making'); body.classList.add('work'); setActive('work'); }
   else setActive('making');
 </script>
+
+<script>
+  // Dynamic INFO.md parser
+  fetch('INFO.md')
+    .then(response => response.text())
+    .then(text => {
+      const profileMatch = text.match(/# Profile\n([\s\S]*?)(?=\n---)/);
+      const projectsMatch = text.match(/# Projects\n([\s\S]*)/);
+      
+      if (profileMatch) {
+        const profileText = profileMatch[1];
+        const name = profileText.match(/\*\*Name\*\*\n(.*)/)[1].trim();
+        const thumbnail = profileText.match(/\*\*Thumbnail\*\*\n(.*)/)[1].trim();
+        const description = profileText.match(/\*\*Description\*\*\n(.*)/)[1].trim();
+        const techStr = profileText.match(/\*\*Technologies\*\*\n(.*)/)[1].trim();
+        
+        const nameParts = name.split(' ');
+        document.getElementById('hero-title').innerHTML = `<span class="white">${nameParts[0]}</span><br/><span class="red">${nameParts[1] || ''}</span><br/><span class="white">${nameParts.slice(2).join(' ')}</span>`;
+        document.getElementById('hero-sub').innerText = description;
+        document.getElementById('profile-img').src = thumbnail;
+        
+        const tagsHtml = techStr.split(',').map(t => `<span class="hero-tag">${t.trim()}</span>`).join('');
+        document.getElementById('hero-tags').innerHTML = tagsHtml;
+      }
+      
+      if (projectsMatch) {
+        const projectsText = projectsMatch[1];
+
+        const projectBlocks = projectsText.split(/\*\*Name\*\*\n/).filter(p => p.trim());
+        const grid = document.getElementById('project-grid');
+        grid.innerHTML = '';
+        let validImages = [];
+
+        
+        projectBlocks.forEach((block, index) => {
+          const name = block.split('\n')[0].trim();
+          const thumbnailMatch = block.match(/\*\*Thumbnail\*\*\n(.*)/);
+          const descMatch = block.match(/\*\*Description\*\*\n(.*)/);
+          const techMatch = block.match(/\*\*Technologies\*\*\n(.*)/);
+          
+          const thumbnail = thumbnailMatch ? thumbnailMatch[1].trim() : '';
+          const desc = descMatch ? descMatch[1].trim() : '';
+          const techStr = techMatch ? techMatch[1].trim() : '';
+          const tagsHtml = techStr.split(',').map(t => `<span class="proj-tag">${t.trim()}</span>`).join('');
+          
+
+          let imgHtml = '';
+          if(thumbnail && thumbnail !== '(placeholder)') {
+             imgHtml = `<img class="proj-img" src="${thumbnail}" alt="${name}"/>`;
+             validImages.push(thumbnail);
+          } else {
+
+             imgHtml = `<div class="proj-img ph"><div class="ph-i">🚀</div><div class="ph-t">${name}</div></div>`;
+          }
+          
+          grid.innerHTML += `
+            <a class="project-card" href="#" style="animation-delay: ${index * 0.05}s">
+              <div class="proj-img-wrap">
+                ${imgHtml}
+              </div>
+              <div class="proj-arrow">↗</div>
+              <div class="proj-body">
+                <div class="proj-year">Project</div>
+                <div class="proj-title">${name}</div>
+                <div class="proj-desc">${desc}</div>
+                <div class="proj-tags">${tagsHtml}</div>
+              </div>
+            </a>
+          `;
+
+        });
+        
+        // Populate the sidebar marquees
+        const marqueeTrackLeft = document.getElementById('marquee-track-left');
+        const marqueeTrackRight = document.getElementById('marquee-track-right');
+        if (validImages.length > 0) {
+            // Normal order for right sidebar
+            let imgElements = validImages.map(src => `<img class="marquee-img" src="${src}" />`).join('');
+            // Reversed order for left sidebar
+            let imgElementsReversed = [...validImages].reverse().map(src => `<img class="marquee-img" src="${src}" />`).join('');
+            
+            // duplicate for infinite scroll
+            if (marqueeTrackLeft) marqueeTrackLeft.innerHTML = imgElementsReversed + imgElementsReversed;
+            if (marqueeTrackRight) marqueeTrackRight.innerHTML = imgElements + imgElements;
+        }
+      }
+    })
+
+    .catch(err => console.error("Error loading INFO.md:", err));
+</script>
 </body>
+
 </html>
