@@ -72,6 +72,24 @@
       z-index: 0;
     }
 
+    /* ── FLOATING TETROMINO BACKGROUND ──
+       Fixed full-viewport canvas painted behind every layer on the page.
+       A negative z-index keeps it under the ambient glows (z-index 0) and
+       under .wrap (z-index 1), while the scanline overlay stays on top at
+       9999. pointer-events: none so it never eats a click. */
+    #canvasHolder {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      overflow: hidden;
+      pointer-events: none;
+    }
+    #blocksCanvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
     /* ── LAYOUT ── */
     .wrap {
       position: relative; z-index: 1;
@@ -559,69 +577,6 @@
       color: var(--red); 
     }
 
-
-    /* ── PHOTO SIDEBARS ── */
-    .photo-sidebar {
-      position: fixed;
-      top: 0;
-      width: 220px;
-      height: 100vh;
-      background: var(--surface);
-      overflow: hidden;
-      z-index: 50;
-      display: none;
-    }
-    .photo-sidebar.left {
-      left: 0;
-      border-right: 1px solid var(--border);
-    }
-    .photo-sidebar.right {
-      right: 0;
-      border-left: 1px solid var(--border);
-    }
-    
-    @media (min-width: 1450px) {
-      .photo-sidebar { display: flex; flex-direction: column; }
-      body { padding-left: 220px; padding-right: 220px; }
-    }
-
-    .marquee-track {
-      display: flex;
-      flex-direction: column;
-    }
-    .photo-sidebar.right .marquee-track {
-      animation: scrollVertical 30s linear infinite;
-    }
-    .photo-sidebar.left .marquee-track {
-      animation: scrollVerticalReverse 30s linear infinite;
-    }
-
-    .marquee-track:hover {
-      animation-play-state: paused;
-    }
-
-    .marquee-img {
-      width: 100%;
-      height: 140px;
-      object-fit: cover;
-      border-bottom: 1px solid var(--border);
-      opacity: 0.5;
-      transition: all 0.3s;
-    }
-
-    .marquee-img:hover {
-      opacity: 1;
-    }
-
-    @keyframes scrollVertical {
-      0% { transform: translateY(0); }
-      100% { transform: translateY(-50%); }
-    }
-    @keyframes scrollVerticalReverse {
-      0% { transform: translateY(-50%); }
-      100% { transform: translateY(0); }
-    }
-
     /* ── ANIMATIONS ── */
 
     @keyframes fadeUp {
@@ -651,15 +606,10 @@
   </style>
 </head>
 <body class="making">
+<div id="canvasHolder"><canvas id="blocksCanvas"></canvas></div>
 <div class="bg-glow-orange"></div>
 
 
-<div class="photo-sidebar left">
-  <div class="marquee-track" id="marquee-track-left"></div>
-</div>
-<div class="photo-sidebar right">
-  <div class="marquee-track" id="marquee-track-right"></div>
-</div>
 
 <div class="wrap">
 
@@ -707,7 +657,7 @@
 
       <!-- PROFILE PHOTO SLOT -->
       <div class="profile-frame">
-        <img class="profile-img" id="profile-img" src="murad_profile_picture.jpg" alt="Muhammed Murad Chamaa"/>
+        <img class="profile-img" id="profile-img" src="_assets/murad_profile_picture.jpg" alt="Muhammed Murad Chamaa"/>
         <div class="profile-badge">Gazi University · Ankara · GPA 3.50</div>
       </div>
     </div>
@@ -757,7 +707,7 @@
       <div class="now-sidebar">
         <!-- PROFILE PHOTO IN NOW -->
         <div class="now-profile">
-          <img class="now-profile-img" src="murad_profile_picture.jpg" alt="Muhammed Murad Chamaa"/>
+          <img class="now-profile-img" src="_assets/murad_profile_picture.jpg" alt="Muhammed Murad Chamaa"/>
         </div>
 
         <ul class="info-list">
@@ -792,6 +742,10 @@
   function switchMode(mode) {
     return function(e) {
       if (e) e.preventDefault();
+      // The Work section is not in the markup any more, and every <section>
+      // is display:none unless the body carries its class -- so switching to
+      // a mode with no section would hide the entire page. Stay put instead.
+      if (!document.querySelector('section.' + mode)) return;
       body.classList.remove('making','now','work');
       body.classList.add(mode);
       history.replaceState(null,'', mode==='making' ? location.pathname : '#'+mode);
@@ -818,95 +772,78 @@
   else setActive('making');
 </script>
 
+<!-- Content is defined in projects.js, generated from INFO.md by build-data.py.
+     It is loaded with a <script> tag rather than fetch(), because fetch() is
+     blocked when a page is opened straight from disk (file://) -- which is
+     exactly what made every photo vanish. Regenerate after editing INFO.md:
+         python3 build-data.py -->
+<script src="projects.js"></script>
+
 <script>
-  // Dynamic INFO.md parser
-  fetch('INFO.md')
-    .then(response => response.text())
-    .then(text => {
-      const profileMatch = text.match(/# Profile\n([\s\S]*?)(?=\n---)/);
-      const projectsMatch = text.match(/# Projects\n([\s\S]*)/);
-      
-      if (profileMatch) {
-        const profileText = profileMatch[1];
-        const name = profileText.match(/\*\*Name\*\*\n(.*)/)[1].trim();
-        const thumbnail = profileText.match(/\*\*Thumbnail\*\*\n(.*)/)[1].trim();
-        const description = profileText.match(/\*\*Description\*\*\n(.*)/)[1].trim();
-        const techStr = profileText.match(/\*\*Technologies\*\*\n(.*)/)[1].trim();
-        
-        const nameParts = name.split(' ');
-        document.getElementById('hero-title').innerHTML = `<span class="white">${nameParts[0]}</span><br/><span class="red">${nameParts[1] || ''}</span><br/><span class="white">${nameParts.slice(2).join(' ')}</span>`;
-        document.getElementById('hero-sub').innerText = description;
-        document.getElementById('profile-img').src = thumbnail;
-        
-        const tagsHtml = techStr.split(',').map(t => `<span class="hero-tag">${t.trim()}</span>`).join('');
-        document.getElementById('hero-tags').innerHTML = tagsHtml;
-      }
-      
-      if (projectsMatch) {
-        const projectsText = projectsMatch[1];
+(function () {
+  var data = window.SITE_DATA;
 
-        const projectBlocks = projectsText.split(/\*\*Name\*\*\n/).filter(p => p.trim());
-        const grid = document.getElementById('project-grid');
-        grid.innerHTML = '';
-        let validImages = [];
+  if (!data) {
+    console.warn('[site] projects.js did not load -- run: python3 build-data.py');
+    return;
+  }
 
-        
-        projectBlocks.forEach((block, index) => {
-          const name = block.split('\n')[0].trim();
-          const thumbnailMatch = block.match(/\*\*Thumbnail\*\*\n(.*)/);
-          const descMatch = block.match(/\*\*Description\*\*\n(.*)/);
-          const techMatch = block.match(/\*\*Technologies\*\*\n(.*)/);
-          
-          const thumbnail = thumbnailMatch ? thumbnailMatch[1].trim() : '';
-          const desc = descMatch ? descMatch[1].trim() : '';
-          const techStr = techMatch ? techMatch[1].trim() : '';
-          const tagsHtml = techStr.split(',').map(t => `<span class="proj-tag">${t.trim()}</span>`).join('');
-          
+  function byId(id) { return document.getElementById(id); }
 
-          let imgHtml = '';
-          if(thumbnail && thumbnail !== '(placeholder)') {
-             imgHtml = `<img class="proj-img" src="${thumbnail}" alt="${name}"/>`;
-             validImages.push(thumbnail);
-          } else {
+  // "" and "(placeholder)" both mean: no art for this one yet.
+  function hasArt(thumb) { return !!thumb && thumb !== '(placeholder)'; }
 
-             imgHtml = `<div class="proj-img ph"><div class="ph-i">🚀</div><div class="ph-t">${name}</div></div>`;
-          }
-          
-          grid.innerHTML += `
-            <a class="project-card" href="#" style="animation-delay: ${index * 0.05}s">
-              <div class="proj-img-wrap">
-                ${imgHtml}
-              </div>
-              <div class="proj-arrow">↗</div>
-              <div class="proj-body">
-                <div class="proj-year">Project</div>
-                <div class="proj-title">${name}</div>
-                <div class="proj-desc">${desc}</div>
-                <div class="proj-tags">${tagsHtml}</div>
-              </div>
-            </a>
-          `;
+  function tagsHtml(list, cls) {
+    return (list || []).map(function (t) {
+      return '<span class="' + cls + '">' + t + '</span>';
+    }).join('');
+  }
 
-        });
-        
-        // Populate the sidebar marquees
-        const marqueeTrackLeft = document.getElementById('marquee-track-left');
-        const marqueeTrackRight = document.getElementById('marquee-track-right');
-        if (validImages.length > 0) {
-            // Normal order for right sidebar
-            let imgElements = validImages.map(src => `<img class="marquee-img" src="${src}" />`).join('');
-            // Reversed order for left sidebar
-            let imgElementsReversed = [...validImages].reverse().map(src => `<img class="marquee-img" src="${src}" />`).join('');
-            
-            // duplicate for infinite scroll
-            if (marqueeTrackLeft) marqueeTrackLeft.innerHTML = imgElementsReversed + imgElementsReversed;
-            if (marqueeTrackRight) marqueeTrackRight.innerHTML = imgElements + imgElements;
-        }
-      }
-    })
+  function renderProfile(p) {
+    if (!p) return;
+    var img = byId('profile-img');
+    if (img && hasArt(p.thumbnail)) img.src = p.thumbnail;
+  }
 
-    .catch(err => console.error("Error loading INFO.md:", err));
+  function renderGrid(projects) {
+    var grid = byId('project-grid');
+    if (!grid) return;
+
+    grid.innerHTML = projects.map(function (p, index) {
+      var art = hasArt(p.thumbnail)
+        ? '<img class="proj-img" src="' + p.thumbnail + '" alt="' + p.name + '"/>'
+        : '<div class="proj-img ph"><div class="ph-i">&#128640;</div><div class="ph-t">' + p.name + '</div></div>';
+
+      return '<a class="project-card" href="#" style="animation-delay: ' + (index * 0.05) + 's">' +
+               '<div class="proj-img-wrap">' + art + '</div>' +
+               '<div class="proj-arrow">&#8599;</div>' +
+               '<div class="proj-body">' +
+                 '<div class="proj-year">Project</div>' +
+                 '<div class="proj-title">' + p.name + '</div>' +
+                 '<div class="proj-desc">' + (p.description || '') + '</div>' +
+                 '<div class="proj-tags">' + tagsHtml(p.technologies, 'proj-tag') + '</div>' +
+               '</div>' +
+             '</a>';
+    }).join('');
+  }
+
+  function renderAll() {
+    renderProfile(data.profile);
+    renderGrid(data.projects || []);
+  }
+
+  renderAll();
+
+  window.MMCRender = {
+    all: renderAll,
+    profile: renderProfile,
+    grid: renderGrid
+  };
+})();
 </script>
+
+<!-- floating tetromino background -->
+<script src="blocks.js"></script>
 </body>
 
 </html>
