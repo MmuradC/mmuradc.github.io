@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title data-i18n="code.title">Code — Muhammed Murad Chamaa</title>
+  <link rel="stylesheet" href="assets/css/base.css"/>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml"/>
+  <link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png"/>
+  <link rel="apple-touch-icon" href="apple-touch-icon.png"/>
+  <link rel="manifest" href="site.webmanifest"/>
+  <meta name="theme-color" content="#1a130d"/>
+  <style>
+    /* ── the one typeface: a handwritten TTF, self-hosted ────────────────
+       Shantell Sans covers Latin + Turkish + Cyrillic, so it serves every
+       European language in the picker. CJK / Arabic / Devanagari / Bengali
+       fall back to the system font (no single handwriting face covers
+       those scripts — that is a font-technology limit, not a choice). */
+    @font-face {
+      font-family: 'Site Hand';
+      src: url('assets/fonts/ShantellSans.ttf') format('truetype');
+      font-weight: 300 800;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    /* ── /code  — palette: amber phosphor terminal ── */
+    :root {
+      --pg-bg:      #0b0d08;
+      --pg-surface: #12140c;
+      --pg-border:  #4b4518;
+      --pg-accent:  #ffb000;
+      --pg-accent2: #ffd35c;
+      --pg-text:    #f0e2b6;
+      --pg-dim:     #7a6d3a;
+      --pg-glow:    rgba(255, 176, 0, .22);
+    }
+
+    .wrap {
+      position: relative;
+      z-index: 1;
+      max-width: 1060px;
+      margin: 0 auto;
+      padding: 90px 24px 70px;
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      gap: 26px;
+      align-items: start;
+    }
+
+    /* ── left: fake linux terminal ── */
+    .terminal {
+      background: linear-gradient(180deg, #0c0e07, #080906);
+      border: 2px solid var(--pg-border);
+      box-shadow: 0 0 34px var(--pg-glow), 6px 6px 0 rgba(0,0,0,.6);
+      font-size: 19px;
+      overflow: hidden;
+      position: sticky;
+      top: 84px;
+    }
+    .terminal .bar {
+      display: flex; align-items: center; gap: 6px;
+      background: #1a1d10;
+      border-bottom: 2px solid var(--pg-border);
+      padding: 8px 12px;
+      font-family: var(--font-pixel);
+      font-size: 8px;
+      color: var(--pg-dim);
+    }
+    .terminal .bar i {
+      width: 10px; height: 10px; display: inline-block;
+    }
+    .terminal .bar i:nth-child(1) { background: #ff5f56; }
+    .terminal .bar i:nth-child(2) { background: #ffbd2e; }
+    .terminal .bar i:nth-child(3) { background: #27c93f; }
+
+    .term-out {
+      height: 260px;
+      overflow-y: auto;
+      padding: 12px 14px;
+      white-space: pre-wrap;
+      word-break: break-word;
+      cursor: text;
+    }
+    .term-out .cmd { color: var(--pg-accent); }
+    .term-out .res { color: var(--pg-text); opacity: .85; }
+    .term-out .err { color: #d4754a; }
+    .term-out .dir { color: var(--pg-accent2); }
+
+    .term-input-row { display: flex; align-items: center; padding: 10px 14px; border-top: 1px solid var(--pg-border); }
+    .term-input-row .ps { color: var(--pg-accent); margin-right: 8px; white-space: nowrap; }
+    .term-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--pg-accent2);
+      font-family: var(--font-mono);
+      font-size: 19px;
+      caret-color: var(--pg-accent);
+    }
+
+    /* ── right: resume rows (icon + name), hyperlinked to desc ── */
+    .resume h2.section-title { margin-top: 0; }
+    .rows { display: flex; flex-direction: column; gap: 10px; }
+    /* resume rows: frameless — the pointer arrow marks the active one */
+    .rows button.row {
+      display: flex; align-items: center; gap: 12px;
+      width: 100%;
+      text-align: left;
+      background: none;
+      border: none;
+      color: var(--pg-text);
+      font-family: var(--font-mono);
+      font-size: 21px;
+      padding: 8px 4px;
+      cursor: pointer;
+      position: relative;
+      transition: transform .1s, color .1s;
+    }
+    .rows button.row::before {
+      content: '';
+      position: absolute;
+      left: -14px; top: 50%;
+      transform: translateY(-50%);
+      color: var(--pg-accent);
+      opacity: 0;
+      transition: opacity .1s, left .1s;
+      font-size: 15px;
+    }
+    .rows button.row:hover { transform: translateX(5px); }
+    .rows button.row:hover .row-name b { color: var(--pg-accent); }
+    .rows button.row.active { transform: translateX(5px); }
+    .rows button.row.active::before { content: '▸'; opacity: 1; left: -16px; }
+    .rows button.row.active .ico { color: var(--pg-accent2); }
+    .rows button.row.active .row-name b { color: var(--pg-accent); }
+    .rows .ico {
+      font-family: var(--font-pixel);
+      font-size: 11px;
+      color: var(--pg-accent);
+      min-width: 30px;
+      text-align: center;
+    }
+    .rows .row-name { flex: 1; line-height: 1.3; }
+    .rows .row-name b { display: block; font-weight: normal; color: var(--pg-text); }
+    .rows .row-name small { color: var(--pg-dim); font-size: 18px; }
+
+    /* desc panel (scrollable) */
+    .desc-box {
+      margin-top: 16px;
+      background: var(--pg-surface);
+      border: 2px solid var(--pg-border);
+      padding: 18px 20px;
+      max-height: 240px;
+      overflow-y: auto;
+    }
+    .desc-box .role-line {
+      font-family: var(--font-pixel);
+      font-size: 10px;
+      color: var(--pg-accent);
+      margin-bottom: 10px;
+      line-height: 1.8;
+    }
+    .desc-box .role-line .period { color: var(--pg-dim); }
+    .desc-box p { font-size: 21px; color: var(--pg-text); }
+
+    .scroll-cue { margin-top: 10px; font-size: 17px; color: var(--pg-dim); }
+
+    @media (max-width: 860px) {
+      .wrap { grid-template-columns: 1fr; }
+      .term-out { height: 200px; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="site-nav">
+    <a class="brand" href="index.html"><img class="brand-mark" src="assets/img/mark.svg" alt=""/><span>MMURADC</span></a>
+    <span class="spacer"></span>
+    <a class="tab" href="index.html" data-i18n="nav.main">MAIN</a>
+    <a class="tab" href="about-me.html" data-i18n="nav.about">ABOUT</a>
+    <a class="tab" href="game.html" data-i18n="nav.game">GAME</a>
+    <a class="tab active" href="code.html" data-i18n="nav.code">CODE</a>
+  </nav>
+
+  <main class="wrap">
+    <!-- left column: the terminal -->
+    <div class="terminal">
+      <div class="bar"><i></i><i></i><i></i><span data-i18n="code.bar">murad@gazi:~/resume</span></div>
+      <div class="term-out" id="term-out"></div>
+      <div class="term-input-row">
+        <span class="ps">murad@gazi:~$</span>
+        <input class="term-input" id="term-input" autocomplete="off" spellcheck="false"
+               placeholder="try: help" data-i18n-attr="placeholder:code.placeholder"/>
+      </div>
+    </div>
+
+    <!-- right column: resume -->
+    <section class="resume">
+      <h1 class="page-title"><span data-i18n="code.heading">CODE</span><span class="pt-sub" data-i18n="code.sub">resume rows × the little shell — it knows its way around this repo</span></h1>
+      <div class="rows" id="resume-rows"></div>
+      <div class="desc-box" id="desc-box" tabindex="0">
+        <p class="role-line" id="desc-role"></p>
+        <p id="desc-text"><span data-i18n="code.select">Select an entry. Or type</span> <b>ls</b> <span data-i18n="code.select2">in the terminal — it knows the way around here.</span></p>
+      </div>
+      <p class="scroll-cue" data-i18n="code.scrollcue">scrollable description panel — long entries scroll in their box</p>
+    </section>
+  </main>
+
+<script src="assets/js/transitions.js"></script>
+<script src="assets/js/i18n.js"></script>
+<script src="assets/js/sfx.js"></script>
+<script src="data.js"></script>
+<script>
+(function () {
+  'use strict';
+  const D = window.SITE_DATA;
+
+  /* ── resume rows ─────────────────────────────────────────── */
+  const rowsEl = document.getElementById('resume-rows');
+  const descRole = document.getElementById('desc-role');
+  const descText = document.getElementById('desc-text');
+  const descBox  = document.getElementById('desc-box');
+
+  rowsEl.innerHTML = D.resume.map((r, i) => `
+    <button class="row" data-i="${i}" data-sfx="select">
+      <span class="ico">${(r.icon || '▮').replace(/`/g, '')}</span>
+      <span class="row-name"><b>${r.role}</b><small>${r.org} · ${r.period}</small></span>
+    </button>`).join('');
+
+  rowsEl.addEventListener('click', ev => {
+    const btn = ev.target.closest('.row');
+    if (!btn) return;
+    for (const b of rowsEl.children) b.classList.remove('active');
+    btn.classList.add('active');
+    const r = D.resume[+btn.dataset.i];
+    descRole.innerHTML = `${r.role} — ${r.org} <span class="period">[${r.period}]</span>`;
+    descText.textContent = r.desc;
+    descBox.scrollTop = 0;
+  });
+
+  /* ── the little shell ─────────────────────────────────────── */
+  const out  = document.getElementById('term-out');
+  const inp  = document.getElementById('term-input');
+
+  const FILES = {};        // fake filesystem built from real SITE_DATA
+  FILES['about.txt']  = D.profile.description;
+  FILES['resume.txt'] = D.resume.map(r => `${r.period}  ${r.role} — ${r.org}`).join('\n');
+  D.games.forEach(g => (FILES['games/' + g.name.toLowerCase().replace(/[^a-z0-9]+/g, '_') + '.md'] = g.description));
+  D.research.forEach(g => (FILES['research/' + g.name.toLowerCase().replace(/[^a-z0-9]+/g, '_') + '.md'] = g.description));
+
+  const T = (k) => (window.MMC_I18N ? MMC_I18N.t(k) : k);
+  const BOOT = () => `
+ ██   ▚▚   ${T('term.booting')}
+ ██   ▚▚   ${T('term.loading')}
+ ██   ▚▚   ${T('term.loggedin')}
+`;
+  function print(html, cls) {
+    const line = document.createElement('div');
+    if (cls) line.className = cls;
+    line.innerHTML = html;
+    out.appendChild(line);
+    out.scrollTop = out.scrollHeight;
+  }
+  print(BOOT().replace(/ /g, '\u00a0'), 'res');
+
+  function ls() {
+    return ['about.txt', 'resume.txt', 'games/', 'research/',
+            D.links.GitHub.replace('https://', '') + '  <- links'];
+  }
+
+  const HELP = () => `${T('term.help')}
+  ls            ${T('term.help.ls')}
+  cat FILE      ${T('term.help.cat')}
+  whoami        ${T('term.help.whoami')}
+  links         ${T('term.help.links')}
+  clear         ${T('term.help.clear')}
+${T('term.help.more')}`;
+
+  function run(raw) {
+    const line = raw.trim();
+    if (!line) return;
+    print('<span class="dir">$</span> <span class="cmd">' + line + '</span>');
+    const [cmd, ...args] = line.split(/\s+/);
+    const arg = args.join(' ');
+
+    switch (cmd) {
+      case 'help':    print(HELP(), 'res'); if (window.MMC_SFX) MMC_SFX.play('ok'); break;
+      case 'clear':   out.innerHTML = ''; if (window.MMC_SFX) MMC_SFX.play('clear'); break;
+      case 'whoami':  print(D.profile.name + ' — ' + D.profile.description, 'res'); if (window.MMC_SFX) MMC_SFX.play('ok'); break;
+      case 'links':
+        for (const [k, v] of Object.entries(D.links))
+          if (v && !v.includes('placeholder'))
+            print(`${k}: <a href="${v}" target="_blank" rel="noopener">${v}</a>`);
+        if (window.MMC_SFX) MMC_SFX.play('ok');
+        break;
+      case 'ls':
+        print(ls().join('\n'), 'res'); if (window.MMC_SFX) MMC_SFX.play('ok'); break;
+      case 'cat': {
+        const f = FILES[arg];
+        if (f === undefined) { print(`cat: ${arg || '<file>'}: ${T('term.nosuchfile')}`, 'err'); if (window.MMC_SFX) MMC_SFX.play('err'); }
+        else { print(f, 'res'); if (window.MMC_SFX) MMC_SFX.play('ok'); }
+        break;
+      }
+      default:
+        print(`${cmd}: ${T('term.notfound')} <b>help</b>)`, 'err');
+        if (window.MMC_SFX) MMC_SFX.play('err');
+    }
+  }
+
+  inp.addEventListener('keydown', e => {
+    if (e.key === 'Enter') { run(inp.value); inp.value = ''; }
+    else if (e.key.length === 1 && window.MMC_SFX) MMC_SFX.play('type');
+  });
+  out.addEventListener('click', () => inp.focus());
+
+  /* ambient auto-typing when the user is idle: types help + a demo cat */
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const demo = ['help', 'cat resume.txt'];
+    let di = 0, ci = 0, paused = false;
+    addEventListener('keypress', () => { paused = true; });
+
+    (function typeIdle() {
+      if (paused) return;
+      const s = demo[di % demo.length];
+      inp.setAttribute('placeholder', '');
+      inp.value = s.slice(0, ++ci);
+      if (ci >= s.length) {
+        setTimeout(() => {
+          if (paused) return;
+          run(inp.value); inp.value = '';
+          ci = 0; di++;
+          typeIdle();
+        }, 1400);
+        return;
+      }
+      setTimeout(typeIdle, 90 + Math.random() * 60);
+    })();
+  }
+})();
+</script>
+</body>
+</html>

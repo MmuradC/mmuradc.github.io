@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title data-i18n="game.title">Games &amp; Research — Muhammed Murad Chamaa</title>
+  <link rel="stylesheet" href="assets/css/base.css"/>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml"/>
+  <link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png"/>
+  <link rel="apple-touch-icon" href="apple-touch-icon.png"/>
+  <link rel="manifest" href="site.webmanifest"/>
+  <meta name="theme-color" content="#1a130d"/>
+  <style>
+    /* ── the one typeface: a handwritten TTF, self-hosted ────────────────
+       Shantell Sans covers Latin + Turkish + Cyrillic, so it serves every
+       European language in the picker. CJK / Arabic / Devanagari / Bengali
+       fall back to the system font (no single handwriting face covers
+       those scripts — that is a font-technology limit, not a choice). */
+    @font-face {
+      font-family: 'Site Hand';
+      src: url('assets/fonts/ShantellSans.ttf') format('truetype');
+      font-weight: 300 800;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    /* ── /game  — palette: arcade at dusk ── */
+    :root {
+      --pg-bg:      #160d06;
+      --pg-surface: #22150b;
+      --pg-border:  #553a18;
+      --pg-accent:  #ffa93a;
+      --pg-accent2: #ffd15c;
+      --pg-text:    #f5e6c8;
+      --pg-dim:     #94795a;
+      --pg-glow:    rgba(255, 169, 58, .3);
+    }
+
+    #bgCanvas {
+      position: fixed; inset: 0;
+      width: 100%; height: 100%;
+      z-index: 0;
+      opacity: .74;
+    }
+
+    .wrap {
+      position: relative;
+      z-index: 1;
+      max-width: 1020px;
+      margin: 0 auto;
+      padding: 90px 24px 70px;
+    }
+
+    .pt-count { color: var(--pg-dim); font-size: 10px; }
+
+    .group-title {
+      font-family: var(--font-pixel);
+      font-size: 13px;
+      color: var(--pg-accent);
+      margin: 34px 0 16px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .group-title::after { content: ''; flex: 1; height: 2px; background: var(--pg-border); }
+    .group-title .count { font-size: 9px; color: var(--pg-dim); }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      display: block;
+      position: relative;
+      background: linear-gradient(180deg, #241609, #1a1008);
+      border: 2px solid var(--pg-border);
+      text-decoration: none;
+      transition: transform .12s steps(3), border-color .12s, box-shadow .12s;
+    }
+    .card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      box-shadow: inset 0 0 0 2px transparent;
+      transition: box-shadow .12s;
+      pointer-events: none;
+    }
+    .card:hover {
+      border-color: var(--pg-accent);
+      transform: translateY(-4px);
+      box-shadow: 0 8px 0 rgba(0,0,0,.55), 0 0 26px var(--pg-glow);
+    }
+    .card:hover .name { color: var(--pg-accent2); }
+
+    .card .shot { aspect-ratio: 16/10; border-bottom: 2px solid var(--pg-border); overflow: hidden; background: #0d0803; }
+    .card .shot img { width: 100%; height: 100%; object-fit: cover; display: block; transition: filter .15s; }
+    .card:hover .shot img { filter: brightness(1.12) saturate(1.08); }
+
+    .card .meta { padding: 16px 18px 18px; }
+    .card .name {
+      font-family: var(--font-pixel);
+      font-size: 11px;
+      color: var(--pg-text);
+      line-height: 1.8;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+    }
+    .card .name::before { content: '▸'; color: var(--pg-accent); font-size: 9px; }
+    .card .desc {
+      font-size: 19px;
+      color: var(--pg-dim);
+      max-height: 62px;
+      overflow: hidden;
+    }
+    .card .tech { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+    .card .tech span {
+      font-family: var(--font-pixel);
+      font-size: 7px;
+      color: var(--pg-accent2);
+      background: rgba(255,169,58,.07);
+      border: 1px solid var(--pg-border);
+      padding: 4px 7px;
+    }
+
+    .scroll-note {
+      margin: 26px 0 8px;
+      font-size: 18px;
+      color: var(--pg-dim);
+    }
+
+    @media (max-width: 640px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="bgCanvas" aria-hidden="true"></canvas>
+
+  <nav class="site-nav">
+    <a class="brand" href="index.html"><img class="brand-mark" src="assets/img/mark.svg" alt=""/><span>MMURADC</span></a>
+    <span class="spacer"></span>
+    <a class="tab" href="index.html" data-i18n="nav.main">MAIN</a>
+    <a class="tab" href="about-me.html" data-i18n="nav.about">ABOUT</a>
+    <a class="tab active" href="game.html" data-i18n="nav.game">GAME</a>
+    <a class="tab" href="code.html" data-i18n="nav.code">CODE</a>
+  </nav>
+
+  <main class="wrap">
+    <h1 class="page-title"><span data-i18n="game.heading">GAME</span> <span class="pt-count" id="game-count" style="font-size:10px">[0]</span><span class="pt-sub" data-i18n="game.sub">arcade cabinet at dusk — the ping-pong table behind the cards never sleeps</span></h1>
+    <div class="grid" id="game-grid"></div>
+
+    <h2 class="group-title" style="margin-top:14px"><span data-i18n="game.research">RESEARCH</span> <span class="count" id="research-count"></span></h2>
+    <div class="grid" id="research-grid"></div>
+
+    <p class="scroll-note" data-i18n="game.scroll">scroll ↓ — the table keeps playing on its own</p>
+  </main>
+
+<script src="assets/js/transitions.js"></script>
+<script src="assets/js/i18n.js"></script>
+<script src="assets/js/sfx.js"></script>
+<script src="data.js"></script>
+<script>
+/* bg-pong — pixel ping-pong inside a vintage tube TV (CRT pass).
+   The game renders to a low-res phosphor buffer (persistence trails);
+   WebGL then bends it into curved glass, adds scanlines, an RGB aperture
+   mask, chroma bleed, glass flicker, a slow roll band, vignette and a
+   plastic bezel. No WebGL → plain upscale, page stays usable. */
+(function () {
+  'use strict';
+
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const C = {
+    bg:      '#160d06',
+    netLine: 'rgba(255,169,58,.35)',
+    court:   'rgba(255,169,58,.22)',
+    ball:    '#ffd15c',
+    paddle1: '#ffa93a',
+    paddle2: '#c25a22'
+  };
+
+  /* ── low-res tube buffer (the phosphor screen) ─────────────────── */
+  const SW = 512, SH = 288;
+  const scene = document.createElement('canvas');
+  scene.width = SW; scene.height = SH;
+  const sx = scene.getContext('2d');
+
+  const bg = document.getElementById('bgCanvas');
+
+  const ball = { x: .5, y: .5, vx: .0045, vy: .0032, size: 5 };
+  const p1 = { y: .5, x: .055 };   // paddles: center-y / x, fractions
+  const p2 = { y: .5, x: .945 };
+  const P = { w: 5, h: 36 };       // paddle size in buffer px
+  let mouse = null, last = performance.now(), trail = [];
+
+  function update(dt) {
+    if (reduced) return;
+    ball.x += ball.vx * dt * 60;
+    ball.y += ball.vy * dt * 60;
+    if (ball.x < .02 || ball.x > .98) { ball.vx *= -1; ball.x = Math.min(.98, Math.max(.02, ball.x)); if (window.MMC_SFX) MMC_SFX.play('pong'); }
+    if (ball.y < .04 || ball.y > .96) { ball.vy *= -1; ball.y = Math.min(.96, Math.max(.04, ball.y)); if (window.MMC_SFX) MMC_SFX.play('pong'); }
+
+    trail.push({ x: ball.x, y: ball.y, a: 1 });
+    if (trail.length > 12) trail.shift();
+    for (const t of trail) t.a -= dt * 2.2;
+
+    // paddles lazily seek the cursor (asleep at center when idle)
+    const target = mouse ? mouse.y : .5;
+    const chase = mouse ? .06 : .015;
+    p1.y += (target - p1.y) * chase * dt * 6;
+    p2.y += ((1 - target) * .2 + .4 - p2.y) * chase * .6 * dt * 6;
+    p1.y = Math.max(.12, Math.min(.88, p1.y));
+    p2.y = Math.max(.12, Math.min(.88, p2.y));
+  }
+
+  function drawScene() {
+    /* phosphor persistence: fade the previous frame toward bg instead of
+       clearing — moving elements leave glowing trails like a real tube */
+    sx.globalAlpha = 1;
+    if (reduced) {
+      sx.fillStyle = C.bg;
+      sx.fillRect(0, 0, SW, SH);
+    } else {
+      sx.fillStyle = 'rgba(22,13,6,.30)';
+      sx.fillRect(0, 0, SW, SH);
+    }
+
+    // center net + court border
+    sx.fillStyle = C.netLine;
+    sx.fillRect((SW / 2 | 0) - 1, (SH * .06 | 0), 2, (SH * .88 | 0));
+    sx.strokeStyle = C.court;
+    sx.lineWidth = 2;
+    sx.strokeRect(SW * .04, SH * .06, SW * .92, SH * .88);
+
+    // trail then ball
+    for (const t of trail) {
+      if (t.a <= 0) continue;
+      sx.globalAlpha = t.a * .35;
+      sx.fillStyle = C.ball;
+      const s = Math.max(2, Math.round(ball.size * (0.6 + t.a * 0.4)));
+      sx.fillRect(Math.round(SW * t.x - s / 2), Math.round(SH * t.y - s / 2), s, s);
+    }
+    sx.globalAlpha = 1;
+
+    sx.fillStyle = C.paddle1;
+    sx.fillRect(Math.round(SW * p1.x), Math.round(SH * p1.y - P.h / 2), P.w, P.h);
+    sx.fillStyle = C.paddle2;
+    sx.fillRect(Math.round(SW * p2.x), Math.round(SH * p2.y - P.h / 2), P.w, P.h);
+    sx.fillStyle = C.ball;
+    sx.fillRect(Math.round(SW * ball.x - ball.size / 2),
+                Math.round(SH * ball.y - ball.size / 2), ball.size, ball.size);
+  }
+
+  /* ── CRT composite pass (WebGL) ───────────────────────────── */
+  let gl = null, prog = null, tex = null;
+  let uRes = null, uTime = null, uMotion = null;
+  let dpr = 1;
+
+  function sh(type, src) {
+    const s = gl.createShader(type);
+    gl.shaderSource(s, src); gl.compileShader(s);
+    if (!gl.getShaderParameter(s, gl.COMPILE_STATUS))
+      console.error(gl.getShaderInfoLog(s), src);
+    return s;
+  }
+
+  function initGL() {
+    gl = bg.getContext('webgl', { antialias: false, alpha: false });
+    if (!gl) return false;
+
+    const VS = 'attribute vec2 p; void main(){ gl_Position = vec4(p, 0.0, 1.0); }';
+    const FS = `
+      precision highp float;
+      uniform sampler2D uTex;
+      uniform vec2  uRes;
+      uniform float uTime;
+      uniform float uMotion;   /* 1 = animate glass, 0 = still */
+
+      const float TWRAP = 120.0;   /* wrapped clock for sin() safety */
+      const float LINES = 288.0;   /* tube buffer height = scanline count */
+
+      float hash(vec2 p){
+        vec3 p3 = fract(vec3(p.xyx) * 0.1031);
+        p3 += dot(p3, p3.yzx + 33.33);
+        return fract((p3.x + p3.y) * p3.z);
+      }
+
+      /* signed distance: rounded rect centered at .5 (negative inside) */
+      float rrect(vec2 uv, vec2 half_size, float r){
+        vec2 q = abs(uv - vec2(0.5)) - half_size;
+        return length(max(q, vec2(0.0))) + min(max(q.x, q.y), 0.0) - r;
+      }
+
+      void main(){
+        vec2 uv = gl_FragCoord.xy / uRes;
+        uv.y = 1.0 - uv.y;
+        float tt = mod(uTime, TWRAP);
+
+        /* curved tube glass */
+        vec2 cc = uv - vec2(0.5);
+        float rr = dot(cc, cc);
+        vec2 wuv = vec2(0.5) + cc * (1.0 + 0.17 * rr + 0.30 * rr * rr);
+
+        /* screen geometry: plastic bezel frame with rounded glass */
+        float halfY = 0.5 - 0.055;
+        float halfX = halfY * (uRes.y / uRes.x);
+        float dScr = rrect(uv, vec2(halfX, halfY), 0.055);
+        float inScr = 1.0 - smoothstep(-0.002, 0.002, dScr);
+
+        /* phosphor image with slight chroma bleed toward the edges */
+        float ca = 0.0012 + 0.0022 * rr;
+        vec3 col;
+        col.r = texture2D(uTex, clamp(wuv + vec2( ca, 0.0), 0.0, 1.0)).r;
+        col.g = texture2D(uTex, clamp(wuv,              0.0, 1.0)).g;
+        col.b = texture2D(uTex, clamp(wuv + vec2(-ca, 0.0), 0.0, 1.0)).b;
+
+        /* scanlines along the buffer rows */
+        float sl = 0.5 + 0.5 * sin(wuv.y * LINES * 6.2831);
+        col *= 1.0 - 0.15 * sl;
+
+        /* slow vertical roll band (tube syncing drift) */
+        float yb = fract(tt * 0.07);
+        col *= 0.92 + 0.12 * exp(-abs(uv.y - yb) * 30.0) * uMotion;
+
+        /* RGB aperture stripes */
+        col *= 0.975 + 0.025 * vec3(
+          sin(gl_FragCoord.x * 2.0944),
+          sin(gl_FragCoord.x * 2.0944 + 2.0944),
+          sin(gl_FragCoord.x * 2.0944 + 4.1888));
+
+        /* glass flicker */
+        float fl = hash(vec2(floor(tt * 47.0), 3.7));
+        col *= 1.0 + (fl - 0.5) * 0.05 * uMotion;
+
+        /* screen vignette + corner glass darkening */
+        col *= 1.0 - 0.75 * rr;
+        col *= smoothstep(-0.03, 0.05, dScr + 0.03);
+
+        /* plastic bezel outside the glass */
+        vec3 bez = vec3(0.052, 0.041, 0.036);
+        bez *= 0.75 + 0.45 * (1.0 - uv.y) * uv.y * 4.0;  /* sheen between edges */
+        bez += (1.0 - smoothstep(0.0, 0.010, abs(dScr) - 0.004)) * 0.05;  /* inner rim highlight */
+        col = mix(col, bez, 1.0 - inScr);
+
+        gl_FragColor = vec4(col, 1.0);
+      }
+    `;
+
+    prog = gl.createProgram();
+    gl.attachShader(prog, sh(gl.VERTEX_SHADER, VS));
+    gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, FS));
+    gl.linkProgram(prog);
+    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
+      console.error(gl.getProgramInfoLog(prog));
+      return false;
+    }
+    gl.useProgram(prog);
+
+    const buf = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+    const locP = gl.getAttribLocation(prog, 'p');
+    gl.enableVertexAttribArray(locP);
+    gl.vertexAttribPointer(locP, 2, gl.FLOAT, false, 0, 0);
+
+    tex = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, tex);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+
+    uRes    = gl.getUniformLocation(prog, 'uRes');
+    uTime   = gl.getUniformLocation(prog, 'uTime');
+    uMotion = gl.getUniformLocation(prog, 'uMotion');
+    return true;
+  }
+
+  function showGL(t) {
+    gl.viewport(0, 0, bg.width, bg.height);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, scene);
+    gl.uniform2f(uRes, bg.width, bg.height);
+    gl.uniform1f(uTime, t);
+    gl.uniform1f(uMotion, reduced ? 0 : 1);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+  }
+
+  let fb2d = null;     // cached 2D context for the no-WebGL fallback
+  function show2D() {
+    if (!fb2d) fb2d = bg.getContext('2d');
+    if (!fb2d) return; // canvas already has another context → bail silently
+    fb2d.imageSmoothingEnabled = true;
+    fb2d.drawImage(scene, 0, 0, bg.width, bg.height);
+  }
+
+  function resize() {
+    dpr = Math.min(devicePixelRatio || 1, 2);
+    bg.width = innerWidth * dpr;
+    bg.height = innerHeight * dpr;
+    bg.style.width = innerWidth + 'px';
+    bg.style.height = innerHeight + 'px';
+    if (gl) gl.viewport(0, 0, bg.width, bg.height);
+  }
+
+  function loop(now) {
+    const dt = Math.min((now - last) / 1000, .05);
+    last = now;
+    update(dt);
+    drawScene();
+    if (gl) showGL(now / 1000);
+    else show2D();
+    requestAnimationFrame(loop);
+  }
+
+  addEventListener('pointermove', e => {
+    mouse = { x: e.clientX / innerWidth, y: e.clientY / innerHeight };
+  });
+  addEventListener('blur', () => { mouse = null; });
+  addEventListener('resize', resize);
+  resize();
+  const hasGL = initGL();
+  if (!hasGL) {
+    fb2d = bg.getContext('2d');
+    console.info('[game] CRT pass unavailable — flat phosphor fallback');
+  }
+  requestAnimationFrame(loop);
+})();
+
+/* card renderer for games + research */
+(function () {
+  'use strict';
+  const D = window.SITE_DATA;
+
+  function card(item) {
+    const pending = (window.MMC_I18N ? MMC_I18N.t('game.artpending') : 'art pending');
+    const bad = !item.thumbnail || item.thumbnail === '(placeholder)' || /^\(placeholder.*\)$/.test(item.thumbnail);
+    const shot = bad
+      ? `<div class="px-placeholder"><span>${item.name}</span><br/>${pending}</div>`
+      : `<img src="${item.thumbnail}" loading="lazy" alt="${item.name} screenshot" onerror="this.closest('.shot').innerHTML='<div class=px-placeholder><span>${item.name}</span><br/>${pending}</div>'"/>`;
+    return `
+      <a class="card" href="#" onclick="return false">
+        <div class="shot">${shot}</div>
+        <div class="meta">
+          <div class="name">${item.name}</div>
+          <div class="desc">${item.description}</div>
+          <div class="tech">${item.technologies.map(t => `<span>${t}</span>`).join('')}</div>
+        </div>
+      </a>`;
+  }
+
+  function render() {
+    document.getElementById('game-grid').innerHTML = D.games.map(card).join('');
+    document.getElementById('research-grid').innerHTML = D.research.map(card).join('');
+    document.getElementById('game-count').textContent = '[' + D.games.length + ']';
+    document.getElementById('research-count').textContent = '[' + D.research.length + ']';
+  }
+  render();
+  document.addEventListener('mmc:lang', render);
+})();
+</script>
+</body>
+</html>

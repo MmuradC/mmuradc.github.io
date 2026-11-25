@@ -1,4 +1,3 @@
-
 # Profile
 
 **Name**
@@ -13,9 +12,79 @@ Computer engineer, Game developer, and Award-winning researcher. Third-year Comp
 **Technologies**
 Unity, Godot, C++, C#, Python, GDScript, QisKit, XGBoost, CatBoost, Linux
 
----
+# About
 
-# Projects
+## Hello, I'm Murad
+
+I build games and then I build the science behind the pixels.
+
+Since I could reach a keyboard I've been making games — now I do it seriously, in postgraduate mode... sort of.
+
+### Currently
+
+- Building a multiplayer physics-based platformer — sleep is negotiable, shipping is not
+- Learning superconducting quantum chip design for TEKNOFEST 2026. Transmon qubits: beautiful and terrifying in equal measure
+- Chairman of the Digital Game Design Society at Gazi University
+
+### Previously
+
+- Won the **Most Original Software Award** at TEKNOFEST 2025 with a 5G indoor positioning system (fingerprinting + multilateration + PyTorch/XGBoost)
+- Board member of the Ergenekon R&D Team and the Data Science Society
+
+### Tools & langs
+
+Unity 6, Godot 4, Python for everything ML.
+
+Running [Arch](https://archlinux.org) and [Fedora](https://fedoraproject.org) — yes, both.
+
+**Languages:** Turkish (native), English (C1), Arabic (B1).
+
+# Resume
+
+**Role**  Game Developer (Indie)
+**Org**  Self / itch.io
+**Period**  2019 → now
+**Icon**  ``
+**Desc**  Shipped multiple 2D games in Godot and Unity, including World's Hardest Golf Game — live publicly, with players in the wild.
+
+**Role**  Chairman
+**Org**  Digital Game Design Society, Gazi University
+**Period**  2024 → now
+**Icon**  `Δ`
+**Desc**  Leading a student society of game-makers: events, jams, and workshops, and keeping everyone shipping.
+
+**Role**  Researcher & Chip Designer
+**Org**  Ergenekon R&D Team
+**Period**  2025 → now
+**Icon**  `φ`
+**Desc**  Transmon qubit analysis tooling and superconducting chip design for TEKNOFEST 2026.
+
+**Role**  ML / 5G Systems Developer
+**Org**  TEKNOFEST 2025 team
+**Period**  2024 – 2025
+**Icon**  `⌖`
+**Desc**  Indoor 5G positioning with fingerprinting, multilateration and boosted tree ensembles. Won Most Original Software Award, 5th place nationally.
+
+**Role**  Industrial Software Engineer (Intern)
+**Org**  Tok-Stock / HYUNDAI-BUMIN
+**Period**  2025
+**Icon**  `⬢`
+**Desc**  Stock-management system in Dockerized PHP + MariaDB + NGINX, and hybrid Linux support.
+
+**Role**  Student, Computer Engineering
+**Org**  Gazi University, Ankara
+**Period**  2022 → now
+**Icon**  `🎓`
+**Desc**  Third year, GPA 3.50/4.00. Data structures, OS, computer architecture, ML electives.
+
+# Links
+
+**Email**  (placeholder)
+**GitHub**  https://github.com/mmuradc
+**LinkedIn**  (placeholder)
+**itch.io**  (placeholder)
+
+# Research
 
 **Name**
 Qitap — Quantum Analysis
@@ -25,6 +94,26 @@ _assets/qitap_preview.png
 Transmon qubit energy level and anharmonicity analysis tool. Designing superconducting chips for TEKNOFEST 2026.
 **Technologies**
 QisKit, Python
+
+**Name**
+5G Model-Based Positioning
+**Thumbnail**
+(placeholder)
+**Description**
+Fingerprinting + multilateration + ML for indoor 5G positioning. 70% accuracy improvement. Won Most Original Software Award at TEKNOFEST 2025, 5th place nationally.
+**Technologies**
+Python, XGBoost, PyTorch
+
+**Name**
+Tok-Stock Management
+**Thumbnail**
+_assets/tok_stock_preview.jpg
+**Description**
+Industrial stock management system with Dockerized services (ZenCart, MariaDB, NGINX). Hybrid Linux support.
+**Technologies**
+PHP, Docker, MariaDB
+
+# Games
 
 **Name**
 TimeForger
@@ -52,24 +141,6 @@ _assets/twhgg_preview.png
 A brutally difficult 2D golf game. Patience is the only mechanic that matters. Live on itch.io.
 **Technologies**
 Godot, GDScript
-
-**Name**
-5G Model-Based Positioning
-**Thumbnail**
-(placeholder)
-**Description**
-Fingerprinting + multilateration + ML for indoor 5G positioning. 70% accuracy improvement. Won Most Original Software Award at TEKNOFEST 2025.
-**Technologies**
-Python, XGBoost
-
-**Name**
-Tok-Stock Management
-**Thumbnail**
-_assets/tok_stock_preview.jpg
-**Description**
-Industrial stock management system with Dockerized services (ZenCart, MariaDB, NGINX). Hybrid Linux support.
-**Technologies**
-PHP, Docker, MariaDB
 
 **Name**
 Divide et Vince
